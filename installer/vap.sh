@@ -27,7 +27,7 @@ MIN_USER_VCPU=1
 MIN_USER_RAM=4
 
 OPENSTACK=$(command -v openstack) && OPENSTACK="openstack --insecure" || OPENSTACK="/opt/jelastic-python311/bin/openstack --insecure"
-command -v $OPENSTACK || { echo "openstack command not found"; exit 1; }
+command -v $OPENSTACK > /dev/null 2>&1 || { echo "openstack command not found"; exit 1; }
 
 [[ -f "/var/log/installer.log" ]] && RUN_LOG="/var/log/installer.log"
 
@@ -426,7 +426,7 @@ create(){
 
   source ${VAP_ENVS}
   IMAGE=$(_getValueById $IMAGE "Name" "images.json")
-  SUBNET=$(_getValueById $SUBNET "Name" "subnets.json")
+  SUBNET=$(_getValueById $SUBNET "Subnet" "subnets.json")
   INFRA_FLAVOR=$(_getValueById $INFRA_FLAVOR "Name" "infraFlavors.json")
   USER_FLAVOR=$(_getValueById $USER_FLAVOR "Name" "userFlavors.json")
 
