@@ -15,14 +15,228 @@ globals:
   vap_settings: /var/www/webroot/.vapenv
   openstack: /opt/jelastic-python311/bin/openstack
 
+settings:
+  configure:
+    submitUnchanged: true
+    fields: 
+      - type: string 
+        name: vhi_proj_domain_name 
+        caption: Project Domain Name 
+        tooltip: "<span>Specify VHI project domain name you will use to create VMs in</span>"
+        required: true
+
+      - type: string 
+        name: vhi_user_domain_name 
+        caption: User Domain Name 
+        tooltip: "<span>Specify VHI user domain name you will use to create VMs in</span>"
+        required: true
+
+      - type: string 
+        name: vhi_proj_name 
+        caption: Project Name 
+        tooltip: "<span>Specify VHI project name you will use to create VMs in</span>"
+        required: true
+
+      - type: string 
+        name: vhi_username 
+        caption: Username 
+        tooltip: "<span>Specify VHI account username you will use to create VMs</span>"
+        required: true
+        
+      - type: string
+        inputType: password
+        name: vhi_password 
+        caption: Password 
+        tooltip: "<span>Specify VHI account password you will use to create VMs</span>"
+        required: true
+        
+      - type: string 
+        name: vhi_url 
+        caption: URL 
+        tooltip: "<span>Specify VHI cluster API endpoint URL</span>"
+        required: true
+        
+      - type: string 
+        name: vap_stack_name 
+        caption: VAP Project Domain 
+        tooltip: "<span>Come up with VAP Project Domain Name</span>"
+        required: true
+        
+  create:
+    fields:
+    - caption: Installation type
+      type: list
+      name: inst_type
+      default: poc
+      values:
+        poc: PoC
+        sb: Sandbox
+        prod: Production
+        high_prod: High Performance Production
+      showIf:
+        poc:
+          - caption: RAM&CPU Infra
+            name: infra_cpu_ram
+            required: true
+            values: infraFlavorListPrepared
+            type: list
+            tooltip: 
+              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/poc-requirements.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+          - caption: RAM&CPU User
+            name: user_cpu_ram
+            required: true
+            values: userFlavorListPrepared
+            type: list
+            tooltip: 
+              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/poc-requirements.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+        sb:
+          - caption: RAM&CPU Infra
+            name: infra_cpu_ram
+            required: true
+            values: infraFlavorListPrepared
+            type: list
+            tooltip: 
+              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/sandbox-requirements.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+          - caption: RAM&CPU User
+            name: user_cpu_ram
+            required: true
+            values: userFlavorListPrepared
+            type: list
+            tooltip: 
+              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/sandbox-requirements.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+        prod:
+          - caption: RAM&CPU Infra
+            name: infra_cpu_ram
+            required: true
+            values: infraFlavorListPrepared
+            type: list
+            tooltip: 
+              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/vlobzakov/vap-installer/main/images/performance-requirements.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+          - caption: RAM&CPU User
+            name: user_cpu_ram
+            required: true
+            values: userFlavorListPrepared
+            type: list
+            tooltip: 
+              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/vlobzakov/vap-installer/main/images/performance-requirements.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+        high_prod:
+          - caption: RAM&CPU Infra
+            name: infra_cpu_ram
+            required: true
+            values: infraFlavorListPrepared
+            type: list
+            tooltip: 
+              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/vlobzakov/vap-installer/main/images/high-performance-requirements.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+          - caption: RAM&CPU User
+            name: user_cpu_ram
+            required: true
+            values: userFlavorListPrepared
+            type: list
+            tooltip: 
+              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/vlobzakov/vap-installer/main/images/high-performance-requirements.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+
+    - caption: VAP Stack Name
+      type: string
+      tooltip: VAP Stack Name
+      name: vap_stack_name
+      required: true
+      value: vapStackName
+
+    - type: compositefield
+      caption: Infra OS/Vz Data, GB
+      defaultMargins: "0 12 0 0"
+      tooltip:
+        text: "Storage volume size for '<b>/</b>' and '<b>/vz</b>' partition for Infra nodes"
+        minWidth: 370        
+      items:
+        - type: spinner
+          name: infra_os_storage_size
+          min: 100
+          max: 2000
+        - type: displayfield
+          markup: "/"
+          cls: x-form-item-label
+          width: 10
+        - type: spinner
+          name: infra_vz_storage_size
+          min: 400
+          max: 5000
+
+    - type: compositefield
+      caption: User OS/Vz Data, GB
+      defaultMargins: "0 12 0 0"
+      tooltip:
+        text: "Storage volume size for '<b>/</b>' and '<b>/vz</b>' partition for User nodes"
+        minWidth: 370        
+      items:
+        - type: spinner
+          name: user_os_storage_size
+          min: 100
+          max: 2000
+        - type: displayfield
+          markup: "/"
+          cls: x-form-item-label
+          width: 10
+        - type: spinner
+          name: user_vz_storage_size
+          min: 400
+          max: 5000
+
+    - caption: User Node Count
+      type: spinner
+      tooltip: User Node Count
+      name: user_node_count
+      min: 1
+      max: 5
+
+    - caption: VHI Public Subnet
+      type: list
+      tooltip: "Select required VHI cluster subnet"
+      name: subnet
+      required: true
+      values: subnetListPrepared
+
+    - caption: VAP Image Name
+      type: list
+      tooltip: Select required qcow2 VAP image name
+      name: image_name
+      required: true
+      values: imageListPrepared
+      
+    onBeforeInit: scripts/createOnBeforeInit.js
+
 buttons:
 - caption: Configure
   action: configure
   title: Configure VHI Cluster Details
+  settings: configure
   loadingText: Configuring...
   submitButtonText: Configure
   successText: Configured successfully.
-  onBeroreInit: scripts/configureOnBeforeInit.js
   
 - caption: New VAP
   action: create
@@ -30,6 +244,7 @@ buttons:
   logsPath: /var/log/installer.log
   successText: The VAP have been successfully created.
   title: New VAP
+  settings: create
   submitButtonText: New VAP
   confirmText: Create New VAP?
   onBeroreInit: scripts/createOnBeforeInit.js
@@ -70,12 +285,11 @@ actions:
 
   getScripts:
     cmd[cp]: |-
-      wget ${baseUrl}/scripts/VAP.yaml -O ${globals.vap_dir}/VAP.yaml;
-      wget ${baseUrl}/scripts/VAP_user.yaml -O ${globals.vap_dir}/VAP_user.yaml;
-      wget ${baseUrl}/scripts/infra.sh -O ${globals.vap_dir}/infra.sh;
-      wget ${baseUrl}/scripts/project.sh -O ${globals.vap_dir}/project.sh;
-      wget ${baseUrl}/scripts/user.sh -O ${globals.vap_dir}/user.sh;
-      wget ${baseUrl}/scripts/vap.sh -O ${globals.vap_dir}/vap.sh;
+      wget ${baseUrl}/installer/VAP.yaml -O ${globals.vap_dir}/VAP.yaml;
+      wget ${baseUrl}/installer/VAP_user.yaml -O ${globals.vap_dir}/VAP_user.yaml;
+      wget ${baseUrl}/installer/infra.sh -O ${globals.vap_dir}/infra.sh;
+      wget ${baseUrl}/installer/user.sh -O ${globals.vap_dir}/user.sh;
+      wget ${baseUrl}/installer/vap.sh -O ${globals.vap_dir}/vap.sh;
 
   installOSclient: 
     - cmd[cp]: |- 
