@@ -92,6 +92,7 @@ getFlavorsByParam(){
       id=$((id+1))
       Name=$(_jq '.Name')
       Ephemeral=$(_jq '.Ephemeral')
+      Value=$(_jq '.ID')
 
       infra_flavors=$(echo $infra_flavors | jq \
         --argjson id $id \
@@ -99,7 +100,8 @@ getFlavorsByParam(){
         --arg RAM  $RAM \
         --arg VCPUs  $VCPUs \
         --arg Ephemeral  "$Ephemeral" \
-      '. += [{"id": $id, "Name": $Name, "RAM": $RAM, "VCPUs": $VCPUs, "Ephemeral": $Ephemeral}]')
+        --arg Value  "$Value" \
+      '. += [{"id": $id, "Name": $Name, "RAM": $RAM, "VCPUs": $VCPUs, "Ephemeral": $Ephemeral, "Value": $Value}]')
     }
   done
 
@@ -157,12 +159,14 @@ getImages(){
     grep -qE "^vap-[0-9]{2}-[0-9]" <<< ${Name} && {
       id=$((id+1))
       Status=$(_jq '.Status')
+      Value=$(_jq '.ID')
 
       images=$(echo $images | jq \
         --argjson id "$id" \
         --arg Name "$Name" \
         --arg Status  "$Status" \
-      '. += [{"id": $id, "Name": $Name, "Status": $Status}]')
+        --arg Value  "$Value" \
+      '. += [{"id": $id, "Name": $Name, "Status": $Status, "Value": $Value}]')
     }
   done
 
@@ -196,16 +200,25 @@ getImages(){
 getSubnets(){
   local id=0
   local subnets=$(jq -n '[]')
+  local cmd="${OPENSTACK} subnet list -f json"
+  local subnets_list=$(execReturn "${cmd}" "Getting subnets list")
+  
   source ${VAP_ENVS}
-
-  for subnet in $(${OPENSTACK} subnet list -f value -c Subnet); do
-        grep -qE "(^127\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^192\.168\.)|(^169\.254)" <<< $subnet || {
-          id=$((id+1))
-          subnets=$(echo $subnets | jq \
-            --argjson id "$id" \
-            --arg Subnet "$subnet" \
-          '. += [{"id": $id, "Subnet": $Subnet}]')
-        }
+  
+  for row in $(echo "${subnets_list}" | jq -r '.[] | @base64'); do
+    _jq() {
+     echo "${row}" | base64 --decode | jq -r "${1}"
+    }
+    subnet=$(_jq '.Subnet')
+    grep -qE "(^127\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^192\.168\.)|(^169\.254)" <<< $subnet || {
+      id=$((id+1))
+      value=$(_jq '.Value')
+      subnets=$(echo $subnets | jq \
+        --argjson id "$id" \
+        --arg Subnet "$subnet" \
+        --arg Value  "$value" \
+        '. += [{"id": $id, "Subnet": $Subnet, "Value": $Value}]')
+    }
   done
 
   local output="{\"result\": 0, \"subnets\": ${subnets}}"
@@ -425,10 +438,10 @@ create(){
   }
 
   source ${VAP_ENVS}
-  IMAGE=$(_getValueById $IMAGE "Name" "images.json")
-  SUBNET=$(_getValueById $SUBNET "Subnet" "subnets.json")
-  INFRA_FLAVOR=$(_getValueById $INFRA_FLAVOR "Name" "infraFlavors.json")
-  USER_FLAVOR=$(_getValueById $USER_FLAVOR "Name" "userFlavors.json")
+  IMAGE=$(_getValueById $IMAGE "Value" "images.json")
+  SUBNET=$(_getValueById $SUBNET "Value" "subnets.json")
+  INFRA_FLAVOR=$(_getValueById $INFRA_FLAVOR "Value" "infraFlavors.json")
+  USER_FLAVOR=$(_getValueById $USER_FLAVOR "Value" "userFlavors.json")
 
   local createcmd="${OPENSTACK} stack create ${VAP_STACK_NAME} -t VAP.yaml"
   createcmd+=" --parameter image=${IMAGE}"
@@ -504,6 +517,10 @@ case ${1} in
       create "$@"
       ;;
 
+    getSubnets)
+      getSubnets "$@"
+      ;;
+      
     *)
       echo "Please use $(basename "$BASH_SOURCE") configure or $(basename "$BASH_SOURCE") create"
       usage
