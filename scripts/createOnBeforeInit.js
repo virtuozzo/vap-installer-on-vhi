@@ -6,11 +6,11 @@
       var imageListPrepared = prepareImageList(JSON.parse(imagesList));
       var subnetsList = getJsonFromFile("subnets.json");
       var subnetListPrepared = prepareSubnetList(JSON.parse(subnetsList));
-      var vapStackName = jelastic.env.control.ExecCmdById('env-3339505', session, '365110', toJSON([{ command: 'source .vapenv && echo $VAP_STACK_NAME' }]), true).responses[0].out;      
+      var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_STACK_NAME' }]), true).responses[0].out;      
        
       function getJsonFromFile(jsonFile) {
         var cmd = "cat /var/www/webroot/" + jsonFile;
-        var resp = jelastic.env.control.ExecCmdById('env-3339505', session, '365110', toJSON([{ "command": cmd }]), true);
+        var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ "command": cmd }]), true);
         if (resp.result != 0) return resp;
         return resp.responses[0].out;
       }
@@ -21,7 +21,7 @@
         for (var i = 0, n = values.length; i < n; i++) {
           aResultValues.push({
             caption: values[i].RAM +" Mb "+ values[i].VCPUs +" VCPUs ",
-            value: values[i].id
+            value: values[i].Value
           });   
         }
         return aResultValues;
@@ -33,7 +33,7 @@
         for (var i = 0, n = values.length; i < n; i++) {
           aResultValues.push({
             caption: values[i].Subnet,
-            value: values[i].id
+            value: values[i].Value
           });   
         }
         return aResultValues;
@@ -45,17 +45,15 @@
         for (var i = 0, n = values.length; i < n; i++) {
           aResultValues.push({
             caption: values[i].Name,
-            value: values[i].id
+            value: values[i].Value
           });   
         }
         return aResultValues;
       }
 
-      var resp = {result:0};
-      var url = "https://raw.githubusercontent.com/sych74/vap-installer/ui/scripts/createSettings.yaml";
-      resp.settings = toNative(new org.yaml.snakeyaml.Yaml().load(new com.hivext.api.core.utils.Transport().get(url)));
-      var fields = resp.settings.fields;
-      for (var i = 0, field; field = fields[i]; i++)
+      var settings = jps.settings.create;
+      var fields = {};
+      for (var i = 0, field; field = jps.settings.create.fields[i]; i++)
         fields[field.name] = field;
       var instTypeFields = fields["inst_type"].showIf;
       instTypeFields.poc[0].values = infraFlavorListPrepared;
@@ -70,4 +68,4 @@
       fields["subnet"].values = subnetListPrepared;
       fields["image_name"].values = imageListPrepared;
       
-      return resp;
+      return settings;
