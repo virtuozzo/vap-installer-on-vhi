@@ -226,8 +226,6 @@ settings:
       name: image_name
       required: true
       values: imageListPrepared
-      
-    onBeforeInit: scripts/createOnBeforeInit.js
 
 buttons:
 - caption: Configure
