@@ -226,6 +226,8 @@ settings:
       name: image_name
       required: true
       values: imageListPrepared
+      
+    onBeforeInit: scripts/createOnBeforeInit.js
 
 buttons:
 - caption: Configure
@@ -245,7 +247,6 @@ buttons:
   settings: create
   submitButtonText: New VAP
   confirmText: Create New VAP?
-  onBeroreInit: scripts/createOnBeforeInit.js
 
 responses:
   99:
@@ -264,22 +265,29 @@ onInstall:
   - getScripts
 
 actions:
+
   configure:
-    - cmd[cp]: |-
-        bash ${globals.vap_dir}/vap.sh configure \
-        --project-domain=${settings.vhi_proj_domain_name} \
-        --user-domain=${settings.vhi_user_domain_name} \
-        --project=${settings.vhi_proj_name} \
-        --username=${settings.vhi_username} \
-        --password=${settings.vhi_password} \
-        --url=${settings.vhi_url} \
-        --vap-stack-name=${settings.vap_stack_name} \
-        --format=json
-    - script: |
-        var resp = JSON.parse(${response.out});
-        if (resp.result == 100) return { type: "warning", message: resp.out };
-        if (resp.result == 99) return { result: 99 };
-        return { result: 0}
+    script: |
+      var cmd = "bash ${globals.vap_dir}/vap.sh configure " +
+      "--project-domain=${settings.vhi_proj_domain_name} " +
+      "--user-domain=${settings.vhi_user_domain_name} " +
+      "--project=${settings.vhi_proj_name} " +
+      "--username=${settings.vhi_username} " +
+      "--password=${settings.vhi_password} " +
+      "--url=${settings.vhi_url} " +
+      "--vap-stack-name=${settings.vap_stack_name} " +
+      "--format=json";
+      var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
+      if (resp.result != 0) return resp;
+      try {
+        respOut = JSON.parse(resp.responses[0].out) || [];
+      } catch (ex) {
+        return { type: "error", message: "cannot parse response out: " + ex }
+      }
+      if (respOut.result == 100) return { type: "warning", message: respOut.out };
+      if (respOut.result == 99) return { result: 99 };
+      if (respOut.result == 0) return { result: 0 };
+      return respOut;
 
   getScripts:
     cmd[cp]: |-
@@ -293,22 +301,29 @@ actions:
     - cmd[cp]: |- 
         pip install python-openstackclient
         pip install python-heatclient
-
+  
   create:
-    - cmd[cp]: |-
-        bash ${globals.vap_dir}/vap.sh create \
-        --infra-flavor=${settings.infra_cpu_ram} \
-        --user-flavor=${settings.user_cpu_ram} \
-        --subnet=${settings.subnet} \
-        --image=${settings.image_name} \
-        --user-host-count=${settings.user_node_count} \
-        --infra-root-size=${settings.infra_os_storage_size} \
-        --infra-vz-size=${settings.infra_vz_storage_size} \
-        --user-root-size=${settings.user_os_storage_size} \
-        --user-vz-size=${settings.user_vz_storage_size} \
-        --format=json
-    - script: |
-        var resp = JSON.parse(${response.out});
-        if (resp.result == 100) return { type: "warning", message: resp.out };
-        if (resp.result == 99) return { result: 99 };
-        return { type: "success", message: resp.out };
+    script: |
+      var cmd = "bash ${globals.vap_dir}/vap.sh create " +
+      "--infra-flavor=${settings.infra_cpu_ram} " +
+      "--user-flavor=${settings.user_cpu_ram} " +
+      "--subnet=${settings.subnet} " +
+      "--image=${settings.image_name} " +
+      "--user-host-count=${settings.user_node_count} " +
+      "--infra-root-size=${settings.infra_os_storage_size} " +
+      "--infra-vz-size=${settings.infra_vz_storage_size} " +
+      "--user-root-size=${settings.user_os_storage_size} " +
+      "--user-vz-size=${settings.user_vz_storage_size} " +
+      "--format=json";
+      var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
+      if (resp.result != 0) return resp;
+      try {
+        respOut = JSON.parse(resp.responses[0].out) || [];
+      } catch (ex) {
+        return { type: "error", message: "cannot parse response out: " + ex }
+      }
+      if (respOut.result == 100) return { type: "warning", message: respOut.out };
+      if (respOut.result == 99) return { result: 99 };
+      if (respOut.result == 0) return { result: 0 };
+      return respOut;
+          
