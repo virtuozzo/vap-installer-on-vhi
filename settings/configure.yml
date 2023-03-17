@@ -1,0 +1,44 @@
+    submitUnchanged: true
+    fields: 
+      - type: string 
+        name: vhi_proj_domain_name 
+        caption: Project Domain Name 
+        tooltip: "<span>Specify VHI project domain name you will use to create VMs in</span>"
+        required: true
+
+      - type: string 
+        name: vhi_user_domain_name 
+        caption: User Domain Name 
+        tooltip: "<span>Specify VHI user domain name you will use to create VMs in</span>"
+        required: true
+
+      - type: string 
+        name: vhi_proj_name 
+        caption: Project Name 
+        tooltip: "<span>Specify VHI project name you will use to create VMs in</span>"
+        required: true
+
+      - type: string 
+        name: vhi_username 
+        caption: Username 
+        tooltip: "<span>Specify VHI account username you will use to create VMs</span>"
+        required: true
+        
+      - type: string
+        inputType: password
+        name: vhi_password 
+        caption: Password 
+        tooltip: "<span>Specify VHI account password you will use to create VMs</span>"
+        required: true
+        
+      - type: string 
+        name: vhi_url 
+        caption: URL 
+        tooltip: "<span>Specify VHI cluster API endpoint URL</span>"
+        required: true
+        
+      - type: string 
+        name: vap_stack_name 
+        caption: VAP Project Domain 
+        tooltip: "<span>Come up with VAP Project Domain Name</span>"
+        required: true
