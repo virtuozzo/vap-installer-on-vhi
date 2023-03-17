@@ -1,0 +1,309 @@
+type: update 
+name: VAP Installer Add-On
+id: vap-installer-addon 
+targetEditions: any 
+logo: /images/logo-small.png
+description: Provision VHI infrastructure and deploy a new VAP on it
+baseUrl: https://raw.githubusercontent.com/sych74/vap-installer/main
+
+targetNodes:
+  nodeType:
+    - apache-python
+
+globals:
+  vap_dir: /var/www/webroot
+  vap_settings: /var/www/webroot/.vapenv
+  openstack: /opt/jelastic-python311/bin/openstack
+
+settings: 
+  configure:
+    submitUnchanged: true
+    fields: 
+      - type: string 
+        name: vhi_proj_domain_name 
+        caption: Project Domain Name 
+        tooltip: "<span>Specify VHI project domain name you will use to create VMs in</span>"
+        required: true
+
+      - type: string 
+        name: vhi_user_domain_name 
+        caption: User Domain Name 
+        tooltip: "<span>Specify VHI user domain name you will use to create VMs in</span>"
+        required: true
+
+      - type: string 
+        name: vhi_proj_name 
+        caption: Project Name 
+        tooltip: "<span>Specify VHI project name you will use to create VMs in</span>"
+        required: true
+
+      - type: string 
+        name: vhi_username 
+        caption: Username 
+        tooltip: "<span>Specify VHI account username you will use to create VMs</span>"
+        required: true
+        
+      - type: string
+        inputType: password
+        name: vhi_password 
+        caption: Password 
+        tooltip: "<span>Specify VHI account password you will use to create VMs</span>"
+        required: true
+        
+      - type: string 
+        name: vhi_url 
+        caption: URL 
+        tooltip: "<span>Specify VHI cluster API endpoint URL</span>"
+        required: true
+        
+      - type: string 
+        name: vap_stack_name 
+        caption: VAP Project Domain 
+        tooltip: "<span>Come up with VAP Project Domain Name</span>"
+        required: true
+
+  create:
+    fields: []
+    onBeforeInit: |
+      var infraFlavorList = getJsonFromFile("${globals.vap_dir}/infraFlavors.json");
+      var infraFlavorListPrepared = prepareFlavorsList(JSON.parse(infraFlavorList));
+      var userFlavorList = getJsonFromFile("${globals.vap_dir}/userFlavors.json");
+      var userFlavorListPrepared = prepareFlavorsList(JSON.parse(userFlavorList));
+      var imagesList = getJsonFromFile("${globals.vap_dir}/images.json");
+      var imageListPrepared = prepareImageList(JSON.parse(imagesList));
+      var subnetsList = getJsonFromFile("${globals.vap_dir}/subnets.json");
+      var subnetListPrepared = prepareSubnetList(JSON.parse(subnetsList));
+      var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_STACK_NAME' }]), true).responses[0].out;      
+       
+      function getJsonFromFile(jsonFile) {
+        var cmd = "cat " + jsonFile;
+        var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ "command": cmd }]), true);
+        if (resp.result != 0) return resp;
+        return resp.responses[0].out;
+      }
+      
+      function prepareFlavorsList(values) {
+        var aResultValues = [];
+        values = values || [];
+        for (var i = 0, n = values.length; i < n; i++) {
+          aResultValues.push({
+            caption: values[i].RAM +" Mb "+ values[i].VCPUs +" VCPUs ",
+            value: values[i].id
+          });   
+        }
+        return aResultValues;
+      }
+      
+      function prepareSubnetList(values) {
+        var aResultValues = [];
+        values = values || [];
+        for (var i = 0, n = values.length; i < n; i++) {
+          aResultValues.push({
+            caption: values[i].Subnet,
+            value: values[i].id
+          });   
+        }
+        return aResultValues;
+      }
+
+      function prepareImageList(values) {
+        var aResultValues = [];
+        values = values || [];
+        for (var i = 0, n = values.length; i < n; i++) {
+          aResultValues.push({
+            caption: values[i].Name,
+            value: values[i].id
+          });   
+        }
+        return aResultValues;
+      }
+
+      settings.fields.push({
+        "caption": "VAP Stack Name",
+        "type": "string",
+        "tooltip": "VAP Stack Name",          
+        "name": "vap_stack_name",
+        "required": true,
+        "value": vapStackName
+      }, {
+        "caption": "RAM&CPU Infra",
+        "type": "list",
+        "tooltip": {
+          "text": "<h3>Hardware Requirements for Infra</h3>Make sure the Flavor fits the requirements highlighted in red for required installation type&#58; <b>PoC, Sandbox, Production, High-Performance Production</b>.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='800' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/hw-requirements-INFRA.png'>",
+          "tipParams": null,
+          "maxWidth": 830,
+          "minWidth": 300
+        },
+        "name": "infra_cpu_ram",
+        "required": true,
+        "values": infraFlavorListPrepared
+      }, {
+        "caption": "RAM&CPU User",
+        "type": "list",
+        "tooltip": {
+          "text": "<h3>Hardware Requirements for User Nodes</h3>Make sure the Flavor fits the requirements highlighted in red for required installation type&#58; <b>PoC, Sandbox, Production, High-Performance Production</b>.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='800' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/hw-requirements-USER.png'>",
+          "tipParams": null,
+          "maxWidth": 830,
+          "minWidth": 300
+      },
+        "name": "user_cpu_ram",
+        "required": true,
+        "values": userFlavorListPrepared
+      }, {
+        "type": "compositefield",
+        "caption": "Infra OS/Vz Data, GB",
+        "defaultMargins": "0 12 0 0",
+        "tooltip": {
+          "text": "Storage volume size for '<b>/</b>' and '<b>/vz</b>' partition for Infra nodes",
+          "minWidth": 370
+        },        
+        "items": [{
+          "type": "spinner",
+          "name": "infra_os_storage_size",
+          "min": 100,
+          "max": 2000
+        }, {
+          "type": "displayfield",
+          "markup": "/",
+          "cls": "x-form-item-label",
+          "width": "10"       
+        }, {
+          "type": "spinner",
+          "name": "infra_vz_storage_size",
+          "min": 400,
+          "max": 5000
+        }]
+      }, {
+        "type": "compositefield",
+        "caption": "User OS/Vz Data, GB",
+        "defaultMargins": "0 12 0 0",
+        "tooltip": {
+          "text": "Storage volume size for '<b>/</b>' and '<b>/vz</b>' partition for User nodes",
+          "minWidth": 370
+        },        
+        "items": [{
+          "type": "spinner",
+          "name": "user_os_storage_size",
+          "min": 100,
+          "max": 2000
+        }, {
+          "type": "displayfield",
+          "markup": "/",
+          "cls": "x-form-item-label",
+          "width": "10"       
+        }, {
+          "type": "spinner",
+          "name": "user_vz_storage_size",
+          "min": 800,
+          "max": 10000
+        }]
+      },  {
+        "caption": "User Node Count",
+        "type": "spinner",
+        "tooltip": "User Node Count",          
+        "name": "user_node_count",
+        "min": 1,
+        "max": 5
+      }, {
+        "caption": "VHI Public Subnet",
+        "type": "list",
+        "tooltip": "Select required VHI cluster subnet",          
+        "name": "subnet",
+        "required": true,
+        "values": subnetListPrepared
+      }, {
+        "caption": "VAP Image Name",
+        "type": "list",
+        "tooltip": "Select required qcow2 VAP image name",          
+        "name": "image_name",
+        "required": true,
+        "values": imageListPrepared
+      })
+
+      return settings;
+
+buttons:
+- caption: Configure
+  action: configure
+  settings: configure
+  title: Configure VHI Cluster Details
+  loadingText: Configuring...
+  submitButtonText: Configure
+  successText: Configured successfully.
+  
+- caption: New VAP
+  action: create
+  loadingText: Creating VAP...
+  settings: create
+  logsPath: /var/log/installer.log
+  successText: The VAP have been successfully created.
+  title: New VAP
+  submitButtonText: New VAP
+  confirmText: Create New VAP?
+
+responses:
+  99:
+    type: warning
+    message: |
+      Errors were discovered during the VAP creating.
+      Please check the **/var/log/installer.log** log file for details. 
+
+onInstall:
+  - cmd[cp]: |-
+      echo "VAP installer add-on logs" > /var/log/installer.log;
+      chown jelastic /var/log/installer.log;
+    user: root
+
+  - installOSclient
+  - getScripts
+
+actions:
+  configure:
+    - cmd[cp]: |-
+        bash ${globals.vap_dir}/vap.sh configure \
+        --project-domain=${settings.vhi_proj_domain_name} \
+        --user-domain=${settings.vhi_user_domain_name} \
+        --project=${settings.vhi_proj_name} \
+        --username=${settings.vhi_username} \
+        --password=${settings.vhi_password} \
+        --url=${settings.vhi_url} \
+        --vap-stack-name=${settings.vap_stack_name} \
+        --format=json
+    - script: |
+        var resp = JSON.parse(${response.out});
+        if (resp.result == 100) return { type: "warning", message: resp.out };
+        if (resp.result == 99) return { result: 99 };
+        return { result: 0}
+
+  getScripts:
+    cmd[cp]: |-
+      wget ${baseUrl}/scripts/VAP.yaml -O ${globals.vap_dir}/VAP.yaml;
+      wget ${baseUrl}/scripts/VAP_user.yaml -O ${globals.vap_dir}/VAP_user.yaml;
+      wget ${baseUrl}/scripts/infra.sh -O ${globals.vap_dir}/infra.sh;
+      wget ${baseUrl}/scripts/project.sh -O ${globals.vap_dir}/project.sh;
+      wget ${baseUrl}/scripts/user.sh -O ${globals.vap_dir}/user.sh;
+      wget ${baseUrl}/scripts/vap.sh -O ${globals.vap_dir}/vap.sh;
+
+  installOSclient: 
+    - cmd[cp]: |- 
+        pip install python-openstackclient
+        pip install python-heatclient
+
+  create:
+    - cmd[cp]: |-
+        bash ${globals.vap_dir}/vap.sh create \
+        --infra-flavor=${settings.infra_cpu_ram} \
+        --user-flavor=${settings.user_cpu_ram} \
+        --subnet=${settings.subnet} \
+        --image=${settings.image_name} \
+        --user-host-count=${settings.user_node_count} \
+        --infra-root-size=${settings.infra_os_storage_size} \
+        --infra-vz-size=${settings.infra_vz_storage_size} \
+        --user-root-size=${settings.user_os_storage_size} \
+        --user-vz-size=${settings.user_vz_storage_size} \
+        --format=json
+    - script: |
+        var resp = JSON.parse(${response.out});
+        if (resp.result == 100) return { type: "warning", message: resp.out };
+        if (resp.result == 99) return { result: 99 };
+        return { type: "success", message: resp.out };

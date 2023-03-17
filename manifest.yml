@@ -1,0 +1,41 @@
+type: install 
+name: VAP Installer 
+id: vap-installer
+targetEditions: any 
+logo: /images/logo-small.png
+description: Get your PaaS installed in a minutes on top of any publicly accessible VHI cluster or in Virtuozzo Hybrid Cloud in automatic mode. After application installation open VAP Installer Add-On, provide credentials, endpoint and create infrastructure for Virtuozzo Application Platform. Then proceed to the Webinstaller URL to deploy new VAP installation. Make sure that you have a valid VAP license before installation.
+baseUrl: https://raw.githubusercontent.com/sych74/vap-installer/main
+settings:
+  fields:  
+  - type: envname
+    name: envName
+    caption: Environment
+    dependsOn: region
+    required: true
+
+  - type: string
+    name: displayName
+    caption: Display Name
+    default: VAP Installer
+
+  - caption: Region
+    type: regionlist
+    name: region
+    disableInactive: true
+    selectFirstAvailable: true
+    dependsOn: ownerUid
+   
+  - type: owner
+    name: ownerUid
+    caption: Owner
+
+onInstall:
+  - script: return {result:0, envGroups:eval('(' + MANIFEST + ')').envGroups}
+  - install:
+      jps: topology.jps?_r=${fn.random}
+      envName: ${settings.envName}
+      region: ${settings.region}
+      loggerName: ${settings.envName}
+      displayName: ${settings.displayName}
+      envGroups: ${response.envGroups}
+      ownerUid: ${settings.ownerUid}

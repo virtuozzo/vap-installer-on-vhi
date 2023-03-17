@@ -1,0 +1,341 @@
+heat_template_version: 2016-10-14
+description: >
+    Template to deploy a VAP cluster
+
+parameters:
+
+  user_hosts_count:
+    type: number
+    label: User node Count
+    description: Number of user nodes
+    constraints:
+      - range: { min: 1, max: 100 }
+        description: must be more than 1.
+    default: 3
+
+  image:
+    type: string
+    label: Image Name
+    description: Name of the image to be used for the compute instance
+    default: vap-82-2_20230217113716
+
+  infra_flavor:
+    type: string
+    label: Infra Flavor Name
+    description: Name of the flavor to be used for the infra compute instance
+
+  user_flavor:
+    type: string
+    label: User Flavor Name
+    description: Name of the flavor to be used for the user compute instance
+
+  public_network:
+    type: string
+    label: Public network name or ID
+    description: Network to attach instance to.
+    default: public
+    
+  public_subnet:
+    type: string
+    label: Public subnet name or ID
+    description: Subnet to attach instance to.
+
+  key_name:
+    type: string
+    description: Name of SSH key to inject into created VMs
+    default: ''
+
+  storage_policy_root:
+    type: string
+    description: Storage policy used for VM's root volumes.
+    default: default
+
+  storage_policy_infra_vz:
+    type: string
+    description: Storage policy used for infra VM's /vz volumes.
+    default: default
+
+  storage_policy_user_vz:
+    type: string
+    description: Storage policy used for user VM's /vz volumes.
+    default: default
+
+  infra_root_volume_size:
+    type: number
+    description: Root volume size for infra host
+    constraints:
+      - range: { min: 100, max: 2000 }
+        description: must be between 200 and 2000 Gb.
+    default: 100
+    
+  user_root_volume_size:
+    type: number
+    description: Root volume size for user host
+    constraints:
+      - range: { min: 100, max: 2000 }
+        description: must be between 200 and 2000 Gb.
+    default: 100
+    
+  infra_vz_volume_size:
+    type: number
+    description: /vz volume size for infra host
+    constraints:
+      - range: { min: 400, max: 5000 }
+        description: must be between 400 and 5000 Gb.
+    default: 400
+    
+  user_vz_volume_size:
+    type: number
+    description: /vz volume size for user host
+    constraints:
+      - range: { min: 800, max: 10000 }
+        description: must be between 800 and 10000 Gb.
+    default: 800
+  
+  infra_swap_volume_size:
+    type: number
+    description: Swap size for infra host
+    constraints:
+      - range: { min: 1, max: 32 }
+        description: must be between 1 and 32 Gb.
+    default: 8
+  
+  user_swap_volume_size:
+    type: number
+    description: Swap size for user host
+    constraints:
+      - range: { min: 1, max: 32 }
+        description: must be between 1 and 32 Gb.
+    default: 8
+  
+resources:
+
+  node_name_prefix:
+    type: OS::Heat::Value
+    properties:
+      value:
+        list_join: ['-', { str_split: ['.', { get_param: 'OS::stack_name' }]}]
+      
+  webinstaller_password:
+    type: OS::Heat::RandomString
+    properties:
+      length: 10
+      character_classes:
+        - class: lowercase
+        
+  hosts_token:
+    type: OS::Heat::RandomString
+    properties:
+      length: 40
+      character_classes:
+        - class: hexdigits
+      
+  internal_net:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        list_join: [ '-', [ { get_param: "OS::stack_name" },'net']]
+      port_security_enabled: false
+
+  internal_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      name: 
+        list_join: [ '-', [ { get_param: "OS::stack_name" }, 'subnet']]
+      network_id: { get_resource: internal_net }
+      cidr: 192.168.128.0/17
+      enable_dhcp: false
+      gateway_ip: null
+      allocation_pools:
+        - start: 192.168.128.1
+          end: 192.168.254.254
+
+  port_public_infra1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: public_network }
+      fixed_ips:
+        - subnet: { get_param: public_subnet }
+        - subnet: { get_param: public_subnet }
+        
+  port_public_infra2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_param: public_network }
+      fixed_ips:
+        - subnet: { get_param: public_subnet }
+        - subnet: { get_param: public_subnet }
+
+  port_private_infra1:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: internal_net }
+      port_security_enabled: off
+      fixed_ips:
+        - ip_address: "192.168.128.1"
+
+  port_private_infra2:
+    type: OS::Neutron::Port
+    properties:
+      network_id: { get_resource: internal_net }
+      port_security_enabled: off
+      fixed_ips:
+        - ip_address: "192.168.128.2"
+
+        
+  volume_swap_infra1:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: infra_swap_volume_size }
+      volume_type: { get_param: storage_policy_root }
+
+  volume_swap_infra2:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: infra_swap_volume_size }
+      volume_type: { get_param: storage_policy_root }
+
+  infra1:
+    type: OS::Nova::Server
+    depends_on: [ port_private_infra2, port_public_infra2 ]
+    properties:
+      name:
+        list_join:
+          - '-'
+          - [{ get_attr: [node_name_prefix, value] }, 'infra1']
+      flavor: { get_param: infra_flavor }
+      config_drive: true
+      block_device_mapping_v2:
+        - boot_index: 0
+          image: { get_param: image }
+          volume_size: { get_param: infra_root_volume_size }
+          volume_type: { get_param: storage_policy_root }
+          delete_on_termination: true
+        - boot_index: 1
+          volume_id: { get_resource: volume_swap_infra1 }
+          delete_on_termination: true
+        - boot_index: 2
+          image: { get_param: image }
+          volume_size: { get_param: infra_vz_volume_size }
+          volume_type: { get_param: storage_policy_infra_vz }
+          delete_on_termination: true
+      networks:
+        - port: { get_resource: port_public_infra1 }
+        - port: { get_resource: port_private_infra1 }
+      key_name: { get_param: key_name }
+      user_data:
+        str_replace:
+          template: {get_file: infra.sh}
+          params:
+            $public_ip: { get_attr: [port_public_infra1, fixed_ips, 0, ip_address] }
+            $private_ip: { get_attr: [port_private_infra1, fixed_ips, 0, ip_address] }
+            $webinstaller_password: { get_attr: [webinstaller_password, value] }
+            $hosts_token: { get_attr: [hosts_token, value] }
+            $resolver1_ip: { get_attr: [port_public_infra1, fixed_ips, 1, ip_address] }
+            $resolver2_ip: { get_attr: [port_public_infra2, fixed_ips, 1, ip_address] }
+            $infra2_internal_ip: { get_attr: [port_private_infra2, fixed_ips, 0, ip_address] }
+
+
+
+  infra2:
+    type: OS::Nova::Server
+    depends_on: [ port_private_infra1, port_public_infra1 ]
+    properties:
+      name:
+        list_join:
+          - '-'
+          - [{ get_attr: [node_name_prefix, value] }, 'infra2']
+      flavor: { get_param: infra_flavor }
+      config_drive: true
+      block_device_mapping_v2:
+        - boot_index: 0
+          image: { get_param: image }
+          volume_size: { get_param: infra_root_volume_size }
+          volume_type: { get_param: storage_policy_root }
+          delete_on_termination: true
+        - boot_index: 1
+          volume_id: { get_resource: volume_swap_infra2 }
+          delete_on_termination: true
+        - boot_index: 2
+          image: { get_param: image }
+          volume_size: { get_param: infra_vz_volume_size }
+          volume_type: { get_param: storage_policy_infra_vz }
+          delete_on_termination: true
+      networks:
+        - port: { get_resource: port_public_infra2 }
+        - port: { get_resource: port_private_infra2 }
+      key_name: { get_param: key_name }
+      user_data:
+        str_replace:
+          template: {get_file: user.sh}
+          params:
+            $resolver_ip: { get_attr: [port_public_infra1, fixed_ips, 1, ip_address] }
+            $hosts_token: { get_attr: [hosts_token, value] }
+            $private_ip: { get_attr: [port_private_infra2, fixed_ips, 0, ip_address] }
+            $public_ip: { get_attr: [port_public_infra2, fixed_ips, 0, ip_address] }
+            $infra1_internal_ip: { get_attr: [port_private_infra1, fixed_ips, 0, ip_address] }
+
+
+  userresources:
+      type: OS::Heat::ResourceGroup
+      depends_on: infra1
+      properties:
+        count: { get_param: user_hosts_count }
+        resource_def:
+          type: VAP_user.yaml
+          properties:
+            name:
+              list_join:
+                - '-'
+                - [{ get_attr: [node_name_prefix, value] }, 'user%index%']
+            image: { get_param: image}
+            flavor: { get_param: user_flavor }
+            private_network: { get_resource: internal_net }
+            public_network: { get_param: public_network }
+            resolver_ip: { get_attr: [port_public_infra1, fixed_ips, 1, ip_address] }
+            key_name: { get_param: key_name }
+            storage_policy_root: { get_param: storage_policy_root }
+            storage_policy_user_vz: { get_param: storage_policy_user_vz }
+            user_root_volume_size: { get_param: user_root_volume_size }
+            user_vz_volume_size: { get_param: user_vz_volume_size }
+            user_swap_volume_size: { get_param: user_swap_volume_size }
+            hosts_token: { get_attr: [hosts_token, value] }
+            private_user_ip:
+              list_join:
+                - ''
+                - ['192.168.128.1', '%index%']
+              
+
+
+outputs:
+
+  public_ip_infra1:
+    description: public IP address of the infra node
+    value:
+      get_attr: [port_public_infra1, fixed_ips, 0, ip_address]
+  
+  #public_ip_infra2:
+  #  description: public IP address of the infra node
+  #  value:
+  #    get_attr: [port_public_infra2, fixed_ips, 0, ip_address]
+  #
+  #resolver_ip1:
+  #  description: public IP address of the resolver
+  #  value:
+  #    get_attr: [port_public_infra1, fixed_ips, 1, ip_address]
+  #
+  #resolver_ip2:
+  #  description: public IP address of the resolver
+  #  value:
+  #    get_attr: [port_public_infra2, fixed_ips, 1, ip_address]
+
+  webinstaller_link:
+    description: installer webserver password
+    value:
+      list_join:
+                - ''
+                - [ 'https://installer:', { get_attr: [webinstaller_password, value] }, '@',  { get_attr: [port_public_infra1, fixed_ips, 0, ip_address] } , ':8081']
+
+  
+
+    
