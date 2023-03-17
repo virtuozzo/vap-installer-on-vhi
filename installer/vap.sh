@@ -212,11 +212,11 @@ getSubnets(){
     subnet=$(_jq '.Subnet')
     grep -qE "(^127\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^192\.168\.)|(^169\.254)" <<< $subnet || {
       id=$((id+1))
-      value=$(_jq '.Value')
+      Value=$(_jq '.ID')
       subnets=$(echo $subnets | jq \
         --argjson id "$id" \
         --arg Subnet "$subnet" \
-        --arg Value  "$value" \
+        --arg Value  "$Value" \
         '. += [{"id": $id, "Subnet": $Subnet, "Value": $Value}]')
     }
   done
