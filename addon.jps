@@ -324,6 +324,6 @@ actions:
       }
       if (respOut.result == 100) return { type: "warning", message: respOut.out };
       if (respOut.result == 99) return { result: 99 };
-      if (respOut.result == 0) return { result: 0 };
+      if (respOut.result == 0) return { type: "success", message: "Web Installer Link: ["+ respOut.out +"]("+ respOut.out +")" };
       return respOut;
           
