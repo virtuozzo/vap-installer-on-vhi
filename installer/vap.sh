@@ -202,9 +202,9 @@ getSubnets(){
   local subnets=$(jq -n '[]')
   local cmd="${OPENSTACK} subnet list -f json"
   local subnets_list=$(execReturn "${cmd}" "Getting subnets list")
-  
+
   source ${VAP_ENVS}
-  
+
   for row in $(echo "${subnets_list}" | jq -r '.[] | @base64'); do
     _jq() {
      echo "${row}" | base64 --decode | jq -r "${1}"
@@ -463,7 +463,7 @@ create(){
 
   web_link=$(getWebinstallerLink ${VAP_STACK_NAME})
 
-  [[ "x${FORMAT}" == "xjson" ]] && { execResponse "${SUCCESS_CODE}" "Web Installer Link: $web_link"; } || { echo "Web Installer Link: $web_link"; };
+  [[ "x${FORMAT}" == "xjson" ]] && { execResponse "${SUCCESS_CODE}" "$web_link"; } || { echo "Web Installer Link: $web_link"; };
 
 }
 
@@ -520,7 +520,7 @@ case ${1} in
     getSubnets)
       getSubnets "$@"
       ;;
-      
+
     *)
       echo "Please use $(basename "$BASH_SOURCE") configure or $(basename "$BASH_SOURCE") create"
       usage
