@@ -21,7 +21,7 @@
         for (var i = 0, n = values.length; i < n; i++) {
           aResultValues.push({
             caption: values[i].RAM +" Mb "+ values[i].VCPUs +" VCPUs ",
-            value: values[i].Value
+            value: values[i].id
           });   
         }
         return aResultValues;
@@ -33,7 +33,7 @@
         for (var i = 0, n = values.length; i < n; i++) {
           aResultValues.push({
             caption: values[i].Subnet,
-            value: values[i].Value
+            value: values[i].id
           });   
         }
         return aResultValues;
@@ -45,7 +45,7 @@
         for (var i = 0, n = values.length; i < n; i++) {
           aResultValues.push({
             caption: values[i].Name,
-            value: values[i].Value
+            value: values[i].id
           });   
         }
         return aResultValues;
