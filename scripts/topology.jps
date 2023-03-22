@@ -11,5 +11,5 @@ nodes:
     cloudlets: 16
 
 onInstall:
-  - install: addon.jps?_r=${fn.random}
+  - install: ${baseUrl}/scripts/addon.jps?_r=${fn.random}
     nodeGroup: cp
