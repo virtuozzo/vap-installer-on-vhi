@@ -29,6 +29,11 @@ MIN_USER_RAM=4
 OPENSTACK=$(command -v openstack) && OPENSTACK="openstack --insecure" || OPENSTACK="/opt/jelastic-python311/bin/openstack --insecure"
 command -v $OPENSTACK > /dev/null 2>&1 || { echo "openstack command not found"; exit 1; }
 
+HEAT=$(command -v heat) && HEAT="heat" || HEAT="/opt/jelastic-python311/bin/heat"
+command -v $HEAT > /dev/null 2>&1 || { echo "heat command not found"; exit 1; }
+
+command -v jq > /dev/null 2>&1 || { echo "jq command not found"; exit 1; }
+
 [[ -f "/var/log/installer.log" ]] && RUN_LOG="/var/log/installer.log"
 
 log(){
