@@ -32,7 +32,7 @@ settings:
 onInstall:
   - script: return {result:0, envGroups:eval('(' + MANIFEST + ')').envGroups}
   - install:
-      jps: topology.jps?_r=${fn.random}
+      jps: scripts/topology.jps?_r=${fn.random}
       envName: ${settings.envName}
       region: ${settings.region}
       loggerName: ${settings.envName}
