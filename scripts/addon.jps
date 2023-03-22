@@ -227,7 +227,7 @@ settings:
       required: true
       values: imageListPrepared
       
-    onBeforeInit: scripts/createOnBeforeInit.js?_r=${fn.random}
+    onBeforeInit: createOnBeforeInit.js?_r=${fn.random}
 
 buttons:
 - caption: Configure
