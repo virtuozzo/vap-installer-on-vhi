@@ -4,7 +4,7 @@ id: vap-installer-addon
 targetEditions: any 
 logo: /images/logo-small.png
 description: Provision VHI infrastructure and deploy a new VAP on it
-baseUrl: https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/ref
+baseUrl: https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master
 
 targetNodes:
   nodeType:
