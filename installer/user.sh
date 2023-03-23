@@ -14,7 +14,7 @@ function log(){
 
 wait_resolvers(){
     log "Wait resolver start"
-    local attempts=1440
+    local attempts=17280
     for i in $( seq $attempts ); do
         log "Attempt $i / $attempts"
         local responce=$(curl http://${RESOLVER_IP}/vap_metadata 2>/dev/null)
@@ -133,7 +133,6 @@ configure_disks(){
     IFS=$'\n' parts=($(sort <<<"${parts[*]}"))
     unset IFS
     
-    
     local a=1
     for i in ${parts[@]}; do
         echo ">>>> $i"
@@ -147,6 +146,18 @@ configure_disks(){
     set +x
 }
 
+function generatePassword(){
+    local PASSWORD_LENGTH=15;
+    local CHARS="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    local PASSWORD;
+    local n=0;
+    while [ "${n:=1}" -le "$PASSWORD_LENGTH" ] ; do
+        PASSWORD="$PASSWORD${CHARS:$(($RANDOM%${#CHARS})):1}"
+        let n+=1
+    done
+    echo $PASSWORD;
+}
+
 main(){
     for i in $(vzlist  -a1 | grep -E '[[:blank:]]3[0-9]{2}([[:blank:]]|$)'); do
         vzctl destroy $i;
@@ -158,18 +169,20 @@ main(){
         iptables -I FORWARD -s 192.168.128.0/17 -j ACCEPT
         status="--status INFRASTRUCTURE_NODE"
     }
-    
+
     configure_disks || return 255;
     wait_resolvers || return $?
     get_cmd || return $?
     get_licens_info || return $?
-    
+
+    PASSWORD="$(generatePassword)"
+
     for i in {1..5}; do
         echo "Add host. Attempt $i"
-        eval "$cmd --force true --install_vz false --ip ${PRIVATE_IP} --externalip ${PUBLIC_IP} $status" && break
-        sleep 20
+        eval "$cmd --force true --install_vz false --ip ${PRIVATE_IP} --externalip ${PUBLIC_IP} $status --password $PASSWORD" && break
+        sleep 60
     done
-    
+
 }
 
 main >> /var/log/install.log 2>&1

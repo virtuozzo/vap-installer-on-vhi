@@ -9,7 +9,7 @@ parameters:
     label: User node Count
     description: Number of user nodes
     constraints:
-      - range: { min: 1, max: 100 }
+      - range: { min: 0, max: 100 }
         description: must be more than 1.
     default: 3
 
@@ -17,7 +17,7 @@ parameters:
     type: string
     label: Image Name
     description: Name of the image to be used for the compute instance
-    default: vap-82-2_20230217113716
+    default: vap-82-3
 
   infra_flavor:
     type: string
@@ -65,7 +65,7 @@ parameters:
     description: Root volume size for infra host
     constraints:
       - range: { min: 100, max: 2000 }
-        description: must be between 200 and 2000 Gb.
+        description: must be between 100 and 2000 Gb.
     default: 100
     
   user_root_volume_size:
@@ -73,7 +73,7 @@ parameters:
     description: Root volume size for user host
     constraints:
       - range: { min: 100, max: 2000 }
-        description: must be between 200 and 2000 Gb.
+        description: must be between 100 and 2000 Gb.
     default: 100
     
   infra_vz_volume_size:
@@ -115,7 +115,7 @@ resources:
     properties:
       value:
         list_join: ['-', { str_split: ['.', { get_param: 'OS::stack_name' }]}]
-      
+
   webinstaller_password:
     type: OS::Heat::RandomString
     properties:
@@ -313,21 +313,6 @@ outputs:
     description: public IP address of the infra node
     value:
       get_attr: [port_public_infra1, fixed_ips, 0, ip_address]
-  
-  #public_ip_infra2:
-  #  description: public IP address of the infra node
-  #  value:
-  #    get_attr: [port_public_infra2, fixed_ips, 0, ip_address]
-  #
-  #resolver_ip1:
-  #  description: public IP address of the resolver
-  #  value:
-  #    get_attr: [port_public_infra1, fixed_ips, 1, ip_address]
-  #
-  #resolver_ip2:
-  #  description: public IP address of the resolver
-  #  value:
-  #    get_attr: [port_public_infra2, fixed_ips, 1, ip_address]
 
   webinstaller_link:
     description: installer webserver password

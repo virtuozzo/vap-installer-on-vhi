@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 version=$(cat /etc/jelastic/infra_version)
 
 cd /root
@@ -12,7 +11,9 @@ bash /root/jelastic_installer.sh \
 --ipaddress $resolver1_ip,$resolver2_ip \
 --hosts_token $hosts_token \
 --lets_encrypt TRY \
---containers "zookeeper,jelastic-db,jelcore:2,gate:2:2,jbilling:2,jstatistic:2,hcore:2,awakener,uploader,puppet,resolver:2,webgate:2,msa,backuper,auth" \
+--containers "zookeeper,jelastic-db,jelcore:2,gate:2:2,jbilling:2,jstatistic:2,hcore:2,awakener,uploader,puppet,resolver:2,webgate:2,msa,backuper,auth,zabbix" \
 --infra2_ip $infra2_internal_ip \
 --disks_to_mount "1:swap,2:/vz" \
+--hd_requirement_warning "NO" \
 --skiparping >> /var/log/install.log 2>&1
+
