@@ -183,7 +183,7 @@ settings:
           width: 10
         - type: spinner
           name: infra_vz_storage_size
-          min: 800
+          min: 100
           max: 5000
 
     - type: compositefield
@@ -203,7 +203,7 @@ settings:
           width: 10
         - type: spinner
           name: user_vz_storage_size
-          min: 800
+          min: 100
           max: 5000
 
     - caption: User Node Count
