@@ -370,7 +370,7 @@ configure(){
   getSubnets
   getImages
 
-  [ -z "${NEW_SSH_KEY_NAME}" ] || { execAction "${OPENSTACK} keypair create ${NEW_SSH_KEY_NAME} > ~/.ssh/id_rsa"; chmod 600 ~/.ssh/id_rsa; } 
+  [ -z "${NEW_SSH_KEY_NAME}" ] || { execAction "${OPENSTACK} keypair create ${NEW_SSH_KEY_NAME}" > ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa; } 
 
   [[ "x${FORMAT}" == "xjson" ]] && { execResponse "${SUCCESS_CODE}" "Сonfigured successfully"; }
 
