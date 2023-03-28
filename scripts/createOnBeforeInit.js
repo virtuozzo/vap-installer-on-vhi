@@ -67,5 +67,6 @@
       fields["vap_stack_name"].value = vapStackName;
       fields["subnet"].values = subnetListPrepared;
       fields["image_name"].values = imageListPrepared;
+      fields["ssh_key"].default = '${settings.ssh_key_name}'
       
       return settings;
