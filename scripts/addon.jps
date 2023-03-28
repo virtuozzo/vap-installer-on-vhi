@@ -314,7 +314,7 @@ actions:
   configure:
     - if (${settings.ssh_key_check:true}):
         - setGlobals:
-            sshCmd: "--new_ssh_key_name=${settings.ssh_key_name}"
+            sshCmd: "--new-ssh-key-name=${settings.ssh_key_name}"
     - else:
         - setGlobals:
             sshCmd: ""

@@ -316,7 +316,7 @@ configure(){
       shift
       shift
       ;;
-      --new_ssh_key_name=*)
+      --new-ssh-key-name=*)
       NEW_SSH_KEY_NAME=${i#*=}
       shift
       shift
@@ -507,7 +507,7 @@ echo "             --username - VHI cluster account username"
 echo "             --password - VHI cluster account password"
 echo "             --url - VHI cluster API endpoint URL"
 echo "             --vap-stack-name - Specify VHI cluster API endpoint URL"
-echo "             --new_ssh_key_name - Specify the name of new SSH key which will be generated"
+echo "             --new-ssh-key-name - Specify the name of new SSH key which will be generated"
 echo
 echo "        NOTICE:"
 echo "              - notice1."
