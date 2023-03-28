@@ -45,7 +45,7 @@
             return values[i].Name;
           }
         }
-        return values[0].Name;
+        return '';
       }
       
       function prepareFlavorsList(values) {
