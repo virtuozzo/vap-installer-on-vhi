@@ -334,19 +334,9 @@ actions:
         if (respOut.result == 0) return { result: 0 };
         return respOut;
     - if (${settings.ssh_key_check:true}):
-        - script: |
-            var cmd = "${globals.openstack} keypair create ${settings.ssh_key_name} > ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa";
-            var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
-            if (resp.result != 0) return resp;
-            try {
-              respOut = JSON.parse(resp.responses[0].out) || [];
-            } catch (ex) {
-              return { type: "error", message: "cannot parse response out: " + ex }
-            }
-            if (respOut.result == 100) return { type: "warning", message: respOut.out };
-            if (respOut.result == 99) return { result: 99 };
-            if (respOut.result == 0) return { result: 0 };
-            return respOut;
+        - cmd[${nodes.cp.master.id}]: |-
+            ${globals.openstack} keypair create ${settings.ssh_key_name} > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
 
   getScripts:
     cmd[cp]: |-
