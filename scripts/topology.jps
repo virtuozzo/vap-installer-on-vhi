@@ -11,5 +11,7 @@ nodes:
     cloudlets: 16
 
 onInstall:
+  - cmd[cp]: echo 'export PATH=$PATH:/opt/jelastic-python311/bin/' >> /var/www/webroot/.bash_profile
+    user: root
   - install: /scripts/addon.jps?_r=${fn.random}
     nodeGroup: cp
