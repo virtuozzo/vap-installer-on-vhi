@@ -527,7 +527,7 @@ echo "             --infra-root-size - Infra node storage volume size in GB"
 echo "             --infra-vz-size - Infra node storage volume size in GB"
 echo "             --user-root-size - User node storage volume size in GB"
 echo "             --user-vz-size - User node  storage volume size in GB"
-echo "             --user-swap-size - Infra node swap size in GB"
+echo "             --infra-swap-size - Infra node swap size in GB"
 echo "             --user-swap-size - User node swap size in GB"
 echo "             --key-name - SSH key name"
 echo
