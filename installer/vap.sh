@@ -354,12 +354,12 @@ configure(){
   [[ "x${FORMAT}" == "xjson" ]] && { echo "export FORMAT=${FORMAT}" >> ${VAP_ENVS}; }
 
   execAction "${OPENSTACK} stack list" "Parameters validation"
-  for stack in $(source ${VAP_ENVS};  ${OPENSTACK} stack list -f value -c 'Stack Name'); do
+  for stack in $(source ${VAP_ENVS};  ${OPENSTACK} stack list -f value -c 'Project Name'); do
     [[ "x$stack" == "x$VAP_STACK_NAME" ]] && {
       [[ "x${FORMAT}" == "xjson" ]] && {
-        execResponse "${VALIDATION_ERROR_CODE}" "Stack name $VAP_STACK_NAME is already taken"; exit 0;
+        execResponse "${VALIDATION_ERROR_CODE}" "Project name $VAP_STACK_NAME is already taken"; exit 0;
       } || {
-        echo "Stack name $VAP_STACK_NAME is already taken"; exit 0;
+        echo "Project name $VAP_STACK_NAME is already taken"; exit 0;
       };
     }
   done
@@ -498,7 +498,7 @@ SCRIPTNAME=$(basename "$BASH_SOURCE")
 echo " USAGE:"
 echo "   CONFIGURE VHI CLUSTER DETAILS:"
 echo "       COMMAND:  "
-echo "             $SCRIPTNAME configure --project-domain=[PROJECT_DOMAIN] --user-domain=[USER_DOMAIN] --project=[PROJECT] --username=[USERNAME] --password=[PASSWORD] --url=[URL] --vap-stack-name=[STACK NAME] "
+echo "             $SCRIPTNAME configure --project-domain=[PROJECT_DOMAIN] --user-domain=[USER_DOMAIN] --project=[PROJECT] --username=[USERNAME] --password=[PASSWORD] --url=[URL] --vap-stack-name=[PROJECT NAME] "
 echo "       ARGUMENTS:    "
 echo "             --project-domain - VHI cluster project name the user account belongs to"
 echo "             --user-domain - VHI cluster project name the user account belongs to"

@@ -176,10 +176,10 @@ settings:
               maxWidth: 830
               minWidth: 300
 
-    - caption: VAP Stack Name
+    - caption: VAP Project Name
       type: string
       tooltip:
-        text: VAP Stack Name
+        text: VAP Project Name
         minWidth: 130
       name: vap_stack_name
       required: true
