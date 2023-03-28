@@ -8,7 +8,7 @@
       var subnetListPrepared = prepareSubnetList(JSON.parse(subnetsList));
       var sshKeys = getSSHKeysList();
       var sshKeysPrepared = prepareSSHKeysList(JSON.parse(sshKeys));
-      var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_STACK_NAME' }]), true).responses[0].out;      
+      var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_STACK_NAME' }]), true).responses[0].out;
        
       function getJsonFromFile(jsonFile) {
         var cmd = "cat /var/www/webroot/" + jsonFile;
@@ -89,5 +89,7 @@
       fields["subnet"].values = subnetListPrepared;
       fields["image_name"].values = imageListPrepared;
       fields["ssh_key"].values = sshKeysPrepared;
+      fields["ssh_key"].values = sshKeysPrepared;
+      fields["ssh_key"].default = '${settings.ssh_key_name}';
       
       return settings;
