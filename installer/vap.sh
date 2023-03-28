@@ -424,12 +424,12 @@ create(){
       shift
       shift
       ;;
-      --infra-swap-volume-size=*)
+      --user-swap-size=*)
       INFRA_SWAP_VOLUME_SIZE=${i#*=}
       shift
       shift
       ;;
-      --user-swap-volume-size=*)
+      --user-swap-size=*)
       USER_SWAP_VOLUME_SIZE=${i#*=}
       shift
       shift
@@ -527,8 +527,8 @@ echo "             --infra-root-size - Infra node storage volume size in GB"
 echo "             --infra-vz-size - Infra node storage volume size in GB"
 echo "             --user-root-size - User node storage volume size in GB"
 echo "             --user-vz-size - User node  storage volume size in GB"
-echo "             --infra-swap-volume-size - Infra node swap size in GB"
-echo "             --user-swap-volume-size - User node swap size in GB"
+echo "             --user-swap-size - Infra node swap size in GB"
+echo "             --user-swap-size - User node swap size in GB"
 echo "             --key-name - SSH key name"
 echo
 echo "        NOTICE:"

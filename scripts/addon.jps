@@ -366,8 +366,8 @@ actions:
       "--infra-vz-size=${settings.infra_vz_storage_size} " +
       "--user-root-size=${settings.user_os_storage_size} " +
       "--user-vz-size=${settings.user_vz_storage_size} " +
-      "--infra-swap-volume-size=${settings.infra_swap_storage_size} " +
-      "--user-swap-volume-size=${settings.user_swap_storage_size} " +
+      "--user-swap-size=${settings.infra_swap_storage_size} " +
+      "--user-swap-size=${settings.user_swap_storage_size} " +
       "--key-name=${settings.ssh_key} " +
       "--format=json";
       var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
