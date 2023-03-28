@@ -316,7 +316,11 @@ configure(){
       shift
       shift
       ;;
-
+      --new_ssh_key_name=*)
+      NEW_SSH_KEY_NAME=${i#*=}
+      shift
+      shift
+      ;;
       *)
         ;;
     esac
@@ -365,6 +369,8 @@ configure(){
   getUserFlavors
   getSubnets
   getImages
+
+  [ -z "${NEW_SSH_KEY_NAME}" ] || { execAction "${OPENSTACK} keypair create ${NEW_SSH_KEY_NAME} > ~/.ssh/id_rsa"; chmod 600 ~/.ssh/id_rsa; } 
 
   [[ "x${FORMAT}" == "xjson" ]] && { execResponse "${SUCCESS_CODE}" "Сonfigured successfully"; }
 
@@ -501,6 +507,7 @@ echo "             --username - VHI cluster account username"
 echo "             --password - VHI cluster account password"
 echo "             --url - VHI cluster API endpoint URL"
 echo "             --vap-stack-name - Specify VHI cluster API endpoint URL"
+echo "             --new_ssh_key_name - Specify the name of new SSH key which will be generated"
 echo
 echo "        NOTICE:"
 echo "              - notice1."
