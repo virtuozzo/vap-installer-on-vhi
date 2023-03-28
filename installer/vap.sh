@@ -354,7 +354,7 @@ configure(){
   [[ "x${FORMAT}" == "xjson" ]] && { echo "export FORMAT=${FORMAT}" >> ${VAP_ENVS}; }
 
   execAction "${OPENSTACK} stack list" "Parameters validation"
-  for stack in $(source ${VAP_ENVS};  ${OPENSTACK} stack list -f value -c 'Project Name'); do
+  for stack in $(source ${VAP_ENVS};  ${OPENSTACK} stack list -f value -c 'Stack Name'); do
     [[ "x$stack" == "x$VAP_STACK_NAME" ]] && {
       [[ "x${FORMAT}" == "xjson" ]] && {
         execResponse "${VALIDATION_ERROR_CODE}" "Project name $VAP_STACK_NAME is already taken"; exit 0;
