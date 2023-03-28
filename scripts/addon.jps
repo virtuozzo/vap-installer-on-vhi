@@ -4,7 +4,7 @@ id: vap-installer-addon
 targetEditions: any 
 logo: /images/logo-small.png
 description: Provision VHI infrastructure and deploy a new VAP on it
-baseUrl: https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master
+baseUrl: https://raw.githubusercontent.com/DmytroZubelevych/vap-installer-on-vhi/master
 
 targetNodes:
   nodeType:
@@ -61,9 +61,26 @@ settings:
         caption: VAP Project Domain 
         tooltip: "<span>Come up with VAP Project Domain Name</span>"
         required: true
+
+      - type: compositefield
+        name: new-ssh-key
+        caption: New SSH Key 
+        tooltip: "<span>If you have no SSH key in VHI cluster tick on the checkbox and come up with SSH key name. A new SSH key pair will be generated and injected into your environment and added to VHI cluster automatically.</span>"
+        required: fslse
+        defaultMargins: "0 12 0 0"
+        items:
+          - type: checkbox
+            name: ssh_key_check
+          - type: string
+            name: ssh_key_name
         
   create:
     fields:
+    - caption: SSH Key Name
+      type: list
+      name: ssh_key
+      tooltip:
+        text: "Pick the <b>SSH Key</b> to be injected into Infra and User Nodes (Virtual Machines). If you chose the <b>New SSH Key</b> option on previous <b>Configure</b> step, a new SSH key pair will be generated, and your environment and VHI cluster will be configured automatically for new SSH keypair usage. If you want to use already existing <b>SSH Key</b> available on VHI cluster, please choose among available ones in the list. <a href='https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_4_6_admins_guide/index.html?TocPath=Management%257CManaging%2520the%2520compute%2520cluster%257CManaging%2520virtual%2520machines%257C_____4#adding-ssh-keys.html?TocPath=Management%257CManaging%2520the%2520compute%2520cluster%257CManaging%2520virtual%2520machines%257C_____4' target='_blank'>Learn More</a> about SSH key pairs in VHI cluster.<p></p>"
     - caption: Installation type
       type: list
       name: inst_type
@@ -81,7 +98,7 @@ settings:
             values: infraFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/poc-requirements.svg'>"
+              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master/images/poc-requirements.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -91,7 +108,7 @@ settings:
             values: userFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/poc-requirements.svg'>"
+              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master/images/poc-requirements.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -102,7 +119,7 @@ settings:
             values: infraFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/sandbox-requirements.svg'>"
+              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master/images/sandbox-requirements.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -112,7 +129,7 @@ settings:
             values: userFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/sych74/vap-installer/main/images/sandbox-requirements.svg'>"
+              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master/images/sandbox-requirements.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -123,7 +140,7 @@ settings:
             values: infraFlavorListPrepared
             type: list
             tooltip: 
-              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/vlobzakov/vap-installer/main/images/performance-requirements.svg'>"
+              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master/images/performance-requirements.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -133,7 +150,7 @@ settings:
             values: userFlavorListPrepared
             type: list
             tooltip: 
-              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/vlobzakov/vap-installer/main/images/performance-requirements.svg'>"
+              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master/images/performance-requirements.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -144,7 +161,7 @@ settings:
             values: infraFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/vlobzakov/vap-installer/main/images/high-performance-requirements.svg'>"
+              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master/images/high-performance-requirements.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -154,23 +171,25 @@ settings:
             values: userFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/vlobzakov/vap-installer/main/images/high-performance-requirements.svg'>"
+              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/jelastic/vap-installer-on-vhi/master/images/high-performance-requirements.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
 
     - caption: VAP Stack Name
       type: string
-      tooltip: VAP Stack Name
+      tooltip:
+        text: VAP Stack Name
+        minWidth: 130
       name: vap_stack_name
       required: true
       value: vapStackName
 
     - type: compositefield
-      caption: Infra OS/Vz Data, GB
+      caption: Infra Storage,GB
       defaultMargins: "0 12 0 0"
       tooltip:
-        text: "Storage volume size for '<b>/</b>' and '<b>/vz</b>' partition for Infra nodes"
+        text: "Storage size for '<b>/</b>', '<b>/vz</b>' and '<b>swap</b>' partition for Infra nodes"
         minWidth: 370        
       items:
         - type: spinner
@@ -185,12 +204,22 @@ settings:
           name: infra_vz_storage_size
           min: 100
           max: 5000
+          default: 800
+        - type: displayfield
+          markup: "/"
+          cls: x-form-item-label
+          width: 10
+        - type: spinner
+          name: infra_swap_storage_size
+          min: 4
+          max: 512
+          default: 32
 
     - type: compositefield
-      caption: User OS/Vz Data, GB
+      caption: User Storage, GB
       defaultMargins: "0 12 0 0"
       tooltip:
-        text: "Storage volume size for '<b>/</b>' and '<b>/vz</b>' partition for User nodes"
+        text: "Storage size for '<b>/</b>', '<b>/vz</b>' and '<b>swap</b>' partition for User nodes"
         minWidth: 370        
       items:
         - type: spinner
@@ -205,24 +234,40 @@ settings:
           name: user_vz_storage_size
           min: 100
           max: 5000
-
+          default: 800
+        - type: displayfield
+          markup: "/"
+          cls: x-form-item-label
+          width: 10
+        - type: spinner
+          name: user_swap_storage_size
+          min: 4
+          max: 512
+          default: 32
+          
     - caption: User Node Count
       type: spinner
-      tooltip: User Node Count
+      tooltip:
+        text: User Node Count
+        minWidth: 135
       name: user_node_count
       min: 1
       max: 5
 
     - caption: VHI Public Subnet
       type: list
-      tooltip: "Select required VHI cluster subnet"
+      tooltip:
+        text: Select required VHI cluster subnet
+        minWidth: 240
       name: subnet
       required: true
       values: subnetListPrepared
 
     - caption: VAP Image Name
       type: list
-      tooltip: Select required qcow2 VAP image name
+      tooltip:
+        text: Select required <b>qcow2</b> VAP image name
+        minWidth: 270
       name: image_name
       required: true
       values: imageListPrepared
@@ -267,27 +312,41 @@ onInstall:
 actions:
 
   configure:
-    script: |
-      var cmd = "bash ${globals.vap_dir}/vap.sh configure " +
-      "--project-domain=${settings.vhi_proj_domain_name} " +
-      "--user-domain=${settings.vhi_user_domain_name} " +
-      "--project=${settings.vhi_proj_name} " +
-      "--username=${settings.vhi_username} " +
-      "--password=${settings.vhi_password} " +
-      "--url=${settings.vhi_url} " +
-      "--vap-stack-name=${settings.vap_stack_name} " +
-      "--format=json";
-      var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
-      if (resp.result != 0) return resp;
-      try {
-        respOut = JSON.parse(resp.responses[0].out) || [];
-      } catch (ex) {
-        return { type: "error", message: "cannot parse response out: " + ex }
-      }
-      if (respOut.result == 100) return { type: "warning", message: respOut.out };
-      if (respOut.result == 99) return { result: 99 };
-      if (respOut.result == 0) return { result: 0 };
-      return respOut;
+    - script: |
+        var cmd = "bash ${globals.vap_dir}/vap.sh configure " +
+        "--project-domain=${settings.vhi_proj_domain_name} " +
+        "--user-domain=${settings.vhi_user_domain_name} " +
+        "--project=${settings.vhi_proj_name} " +
+        "--username=${settings.vhi_username} " +
+        "--password=${settings.vhi_password} " +
+        "--url=${settings.vhi_url} " +
+        "--vap-stack-name=${settings.vap_stack_name} " +
+        "--format=json";
+        var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
+        if (resp.result != 0) return resp;
+        try {
+          respOut = JSON.parse(resp.responses[0].out) || [];
+        } catch (ex) {
+          return { type: "error", message: "cannot parse response out: " + ex }
+        }
+        if (respOut.result == 100) return { type: "warning", message: respOut.out };
+        if (respOut.result == 99) return { result: 99 };
+        if (respOut.result == 0) return { result: 0 };
+        return respOut;
+    - if (${settings.ssh_key_check:true}):
+        - script: |
+            var cmd = "${globals.openstack} keypair create ${settings.ssh_key_name} > ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa";
+            var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
+            if (resp.result != 0) return resp;
+            try {
+              respOut = JSON.parse(resp.responses[0].out) || [];
+            } catch (ex) {
+              return { type: "error", message: "cannot parse response out: " + ex }
+            }
+            if (respOut.result == 100) return { type: "warning", message: respOut.out };
+            if (respOut.result == 99) return { result: 99 };
+            if (respOut.result == 0) return { result: 0 };
+            return respOut;
 
   getScripts:
     cmd[cp]: |-
@@ -314,6 +373,9 @@ actions:
       "--infra-vz-size=${settings.infra_vz_storage_size} " +
       "--user-root-size=${settings.user_os_storage_size} " +
       "--user-vz-size=${settings.user_vz_storage_size} " +
+      "--infra-swap-volume-size=${settings.infra_swap_storage_size} " +
+      "--user-swap-volume-size=${settings.user_swap_storage_size} " +
+      "--key-name=${settings.ssh_key} " +
       "--format=json";
       var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
       if (resp.result != 0) return resp;

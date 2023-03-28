@@ -6,6 +6,8 @@
       var imageListPrepared = prepareImageList(JSON.parse(imagesList));
       var subnetsList = getJsonFromFile("subnets.json");
       var subnetListPrepared = prepareSubnetList(JSON.parse(subnetsList));
+      var sshKeys = getSSHKeysList();
+      var sshKeysPrepared = prepareSSHKeysList(JSON.parse(sshKeys));
       var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_STACK_NAME' }]), true).responses[0].out;      
        
       function getJsonFromFile(jsonFile) {
@@ -13,6 +15,25 @@
         var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ "command": cmd }]), true);
         if (resp.result != 0) return resp;
         return resp.responses[0].out;
+      }
+
+      function getSSHKeysList() {
+	var cmd = "/opt/jelastic-python311/bin/openstack keypair list -f json"
+        var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ "command": cmd }]), true);
+        if (resp.result != 0) return resp;
+        return resp.responses[0].out;
+      }
+
+      function prepareSSHKeysList(values) {
+        var aResultValues = [];
+        values = values || [];
+        for (var i = 0, n = values.length; i < n; i++) {
+          aResultValues.push({
+            caption: values[i].Name,
+            value: values[i].Name
+          });
+        }
+        return aResultValues;
       }
       
       function prepareFlavorsList(values) {
@@ -67,6 +88,6 @@
       fields["vap_stack_name"].value = vapStackName;
       fields["subnet"].values = subnetListPrepared;
       fields["image_name"].values = imageListPrepared;
-      fields["ssh_key"].default = '${settings.ssh_key_name}'
+      fields["ssh_key"].values = sshKeysPrepared;
       
       return settings;

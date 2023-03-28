@@ -418,6 +418,21 @@ create(){
       shift
       shift
       ;;
+      --infra-swap-volume-size=*)
+      INFRA_SWAP_VOLUME_SIZE=${i#*=}
+      shift
+      shift
+      ;;
+      --user-swap-volume-size=*)
+      USER_SWAP_VOLUME_SIZE=${i#*=}
+      shift
+      shift
+      ;;
+      --key-name=*)
+      KEY_NAME=${i#*=}
+      shift
+      shift
+      ;;
       *)
         ;;
     esac
@@ -459,9 +474,9 @@ create(){
   createcmd+=" --parameter user_root_volume_size=${USER_ROOT_SIZE}"
   createcmd+=" --parameter infra_vz_volume_size=${INFRA_VZ_SIZE}"
   createcmd+=" --parameter user_vz_volume_size=${USER_VZ_SIZE}"
-  createcmd+=" --parameter infra_swap_volume_size=8"
-  createcmd+=" --parameter user_swap_volume_size=8"
-  createcmd+=" --parameter key_name=vap-installer-demo"
+  createcmd+=" --parameter infra_swap_volume_size=${INFRA_SWAP_VOLUME_SIZE}"
+  createcmd+=" --parameter user_swap_volume_size=${USER_SWAP_VOLUME_SIZE}"
+  createcmd+=" --parameter key_name=${KEY_NAME}"
   createcmd+=" --wait"
 
   [[ "x${FORMAT}" == "xjson" ]] && { execAction "${createcmd}" "Creating new stack" ; } || { ${createcmd} ; };
@@ -505,6 +520,9 @@ echo "             --infra-root-size - Infra node storage volume size in GB"
 echo "             --infra-vz-size - Infra node storage volume size in GB"
 echo "             --user-root-size - User node storage volume size in GB"
 echo "             --user-vz-size - User node  storage volume size in GB"
+echo "             --infra-swap-volume-size - Infra node swap size in GB"
+echo "             --user-swap-volume-size - User node swap size in GB"
+echo "             --key-name - SSH key name"
 echo
 echo "        NOTICE:"
 echo "              - notice1."
