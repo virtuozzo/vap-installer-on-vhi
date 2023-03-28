@@ -90,6 +90,5 @@
       fields["image_name"].values = imageListPrepared;
       fields["ssh_key"].values = sshKeysPrepared;
       fields["ssh_key"].values = sshKeysPrepared;
-      fields["ssh_key"].default = '${settings.ssh_key_name}';
       
       return settings;
