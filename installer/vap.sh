@@ -424,7 +424,7 @@ create(){
       shift
       shift
       ;;
-      --user-swap-size=*)
+      --infra-swap-size=*)
       INFRA_SWAP_VOLUME_SIZE=${i#*=}
       shift
       shift
