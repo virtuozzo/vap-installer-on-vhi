@@ -8,6 +8,7 @@
       var subnetListPrepared = prepareSubnetList(JSON.parse(subnetsList));
       var sshKeys = getSSHKeysList();
       var sshKeysPrepared = prepareSSHKeysList(JSON.parse(sshKeys));
+      var defaultSSHKey = getDefaultSSHKey(JSON.parse(sshKeys));
       var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_STACK_NAME' }]), true).responses[0].out;
        
       function getJsonFromFile(jsonFile) {
@@ -34,6 +35,17 @@
           });
         }
         return aResultValues;
+      }
+
+      function getDefaultSSHKey(values) {
+        var aResultValues = [];
+        values = values || [];
+        for (var i = 0, n = values.length; i < n; i++) {
+          if (values[i].Name == '${settings.ssh_key_name}') {
+            return values[i].Name;
+          }
+        }
+        return values[0].Name;
       }
       
       function prepareFlavorsList(values) {
@@ -89,6 +101,6 @@
       fields["subnet"].values = subnetListPrepared;
       fields["image_name"].values = imageListPrepared;
       fields["ssh_key"].values = sshKeysPrepared;
-      fields["ssh_key"].values = sshKeysPrepared;
+      fields["ssh_key"].default = defaultSSHKey;
       
       return settings;
