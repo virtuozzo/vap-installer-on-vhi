@@ -18,7 +18,7 @@
       }
 
       function getSSHKeysList() {
-	var cmd = "/opt/jelastic-python311/bin/openstack keypair list -f json"
+	var cmd = "source .vapenv; /opt/jelastic-python311/bin/openstack keypair list -f json"
         var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ "command": cmd }]), true);
         if (resp.result != 0) return resp;
         return resp.responses[0].out;
