@@ -343,7 +343,13 @@ configure(){
       echo "Not all arguments passed!"
       usage
       exit 1;
+  fi
+  
+  NEW_SSH_KEY_NAME_LENGTH=${#NEW_SSH_KEY_NAME}
 
+  if [ "$NEW_SSH_KEY_NAME_LENGTH" -lt 3 ]; then
+      echo "--new-ssh-key-name cannot be shorter than 3 symbols"
+      exit 1
   fi
 
   echo "export OS_PROJECT_DOMAIN_NAME=${PROJECT_DOMAIN}" > ${VAP_ENVS};
@@ -527,7 +533,7 @@ echo "             --username - VHI cluster account username"
 echo "             --password - VHI cluster account password"
 echo "             --url - VHI cluster API endpoint URL"
 echo "             --vap-stack-name - Specify VHI cluster API endpoint URL"
-echo "             --new-ssh-key-name - Specify the name of new SSH key which will be generated"
+echo "             --new-ssh-key-name - Specify the name of new SSH key which will be generated (at least 3 symbols required)"
 echo
 echo "   CREATE NEW VAP:"
 echo "       COMMAND:  "
