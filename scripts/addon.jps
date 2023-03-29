@@ -62,17 +62,17 @@ settings:
         tooltip: "<span>Come up with VAP Project Domain Name</span>"
         required: true
 
-      - type: compositefield
-        name: new-ssh-key
-        caption: New SSH Key 
+      - type: toggle
+        name: ssh_key_check
+        caption: New SSH Key
         tooltip: "<span>If you have no SSH key in VHI cluster tick on the checkbox and come up with SSH key name. A new SSH key pair will be generated and injected into your environment and added to VHI cluster automatically.</span>"
-        required: fslse
-        defaultMargins: "0 12 0 0"
-        items:
-          - type: checkbox
-            name: ssh_key_check
-          - type: string
-            name: ssh_key_name
+        required: false
+        showIf:
+          true:
+            - type: string
+              name: ssh_key_name
+              required: true
+              tooltip: "Minimum length of 3 symbols is required."
         
   create:
     fields:
