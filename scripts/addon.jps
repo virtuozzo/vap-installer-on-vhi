@@ -226,8 +226,15 @@ settings:
       caption: User Storage, GB
       defaultMargins: "0 12 0 0"
       tooltip:
-        text: "Storage size for '<b>/</b>', '<b>/vz</b>' and '<b>swap</b>' partition for User nodes"
-        minWidth: 370        
+        text: |
+              Storage size for '<b>/</b>', '<b>/vz</b>' and '<b>swap</b>' partition for User nodes.<br>
+              Swap size depends on RAM:
+              <ul>
+                <li><b>&#x2022;</b> 4-8 GB - the swap size is equal to the RAM size
+                <li><b>&#x2022;</b> 8-64 GB - the swap size is half the RAM size
+                <li><b>&#x2022;</b> 64+ GB - the swap size is 32 GB
+              </ul>
+        minWidth: 370       
       items:
         - type: spinner
           name: user_os_storage_size
