@@ -10,6 +10,7 @@
       var sshKeysPrepared = prepareSSHKeysList(JSON.parse(sshKeys));
       var defaultSSHKey = getDefaultSSHKey(JSON.parse(sshKeys));
       var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_STACK_NAME' }]), true).responses[0].out;
+      var currentSSHKey = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_SSH_KEY_NAME' }]), true).responses[0].out;
        
       function getJsonFromFile(jsonFile) {
         var cmd = "cat /var/www/webroot/" + jsonFile;
@@ -35,17 +36,6 @@
           });
         }
         return aResultValues;
-      }
-
-      function getDefaultSSHKey(values) {
-        var aResultValues = [];
-        values = values || [];
-        for (var i = 0, n = values.length; i < n; i++) {
-          if (values[i].Name === '${settings.ssh_key_name}') {
-            return values[i].Name;
-          }
-        }
-        return '';
       }
       
       function prepareFlavorsList(values) {
@@ -101,6 +91,6 @@
       fields["subnet"].values = subnetListPrepared;
       fields["image_name"].values = imageListPrepared;
       fields["ssh_key"].values = sshKeysPrepared;
-      fields["ssh_key"].default = defaultSSHKey;
+      fields["ssh_key"].default = currentSSHKey;
       
       return settings;
