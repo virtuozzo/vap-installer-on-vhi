@@ -71,6 +71,7 @@ settings:
           true:
             - type: string
               name: ssh_key_name
+              caption: New SSH Key Name
               required: true
               tooltip: "Minimum length of 3 symbols is required."
         
