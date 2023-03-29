@@ -8,7 +8,6 @@
       var subnetListPrepared = prepareSubnetList(JSON.parse(subnetsList));
       var sshKeys = getSSHKeysList();
       var sshKeysPrepared = prepareSSHKeysList(JSON.parse(sshKeys));
-      var defaultSSHKey = getDefaultSSHKey(JSON.parse(sshKeys));
       var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_STACK_NAME' }]), true).responses[0].out;
       var currentSSHKey = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: 'source .vapenv && echo $VAP_SSH_KEY_NAME' }]), true).responses[0].out;
        
