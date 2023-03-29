@@ -513,11 +513,19 @@ create(){
   createcmd+=" --parameter key_name=${KEY_NAME}"
   createcmd+=" --wait"
 
-  [[ "x${FORMAT}" == "xjson" ]] && { execAction "${createcmd}" "Creating new stack" ; } || { ${createcmd} ; };
+  if [[ "x${FORMAT}" == "xjson" ]]; then
+      execAction "${createcmd}" "Creating new stack";
+  else
+      ${createcmd};
+  fi
 
   web_link=$(getWebinstallerLink ${VAP_STACK_NAME})
 
-  [[ "x${FORMAT}" == "xjson" ]] && { execResponse "${SUCCESS_CODE}" "$web_link"; } || { echo "Web Installer Link: $web_link"; };
+  if [[ "x${FORMAT}" == "xjson" ]]; then
+      execResponse "${SUCCESS_CODE}" "$web_link";
+  else
+      echo "Web Installer Link: $web_link";
+  fi
 
 }
 
