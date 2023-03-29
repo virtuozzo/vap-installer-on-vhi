@@ -345,11 +345,12 @@ configure(){
       exit 1;
   fi
   
-  NEW_SSH_KEY_NAME_LENGTH=${#NEW_SSH_KEY_NAME}
-
-  if [ "$NEW_SSH_KEY_NAME_LENGTH" -lt 3 ]; then
-      echo "--new-ssh-key-name cannot be shorter than 3 symbols"
-      exit 1
+  if [ -n "${NEW_SSH_KEY_NAME}" ]; then
+      NEW_SSH_KEY_NAME_LENGTH=${#NEW_SSH_KEY_NAME}
+      if [ "$NEW_SSH_KEY_NAME_LENGTH" -lt 3 ]; then
+          echo "--new-ssh-key-name cannot be shorter than 3 symbols"
+          exit 1
+      fi
   fi
 
   echo "export OS_PROJECT_DOMAIN_NAME=${PROJECT_DOMAIN}" > ${VAP_ENVS};
@@ -385,7 +386,7 @@ configure(){
   getSubnets
   getImages
 
-  if [ -z "${NEW_SSH_KEY_NAME}" ]; then
+  if [ -n "${NEW_SSH_KEY_NAME}" ]; then
       if [ ! -f '~/.ssh/id_rsa' ]; then
           ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa;
       else 
