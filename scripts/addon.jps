@@ -85,6 +85,17 @@ settings:
       type: list
       name: inst_type
       default: poc
+      tooltip:
+        text: |
+              Platform types based on the purpose:
+              <ul>
+                <li><b>&#x2022; PoC</b> (Proof-of-Concept) - a platform used for feature demonstration or non-complex testing activities
+                <li><b>&#x2022; Sandbox</b> - non-production platform for testing purposes
+                <li><b>&#x2022; Production</b> - a public or private platform that is used for production purposes
+                <li><b>&#x2022; High-Performance Production</b> - the public cloud platform with extended performance capabilities for demanding end-users
+              </ul>  
+        maxWidth: 750
+        minWidth: 750
       values:
         poc: PoC
         sb: Sandbox
