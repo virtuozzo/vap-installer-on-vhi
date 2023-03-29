@@ -251,6 +251,14 @@ getSubnets(){
   fi
 }
 
+getKeypairs(){
+    source ${VAP_ENVS}
+    echo
+    echo
+    echo "VHI Cluster Keypairs"
+    ${OPENSTACK} keypair list
+}
+
 getWebinstallerLink(){
   local stack_name="$1"
   local cmd="${OPENSTACK} stack output show ${stack_name} webinstaller_link -f value -c output_value "
@@ -549,6 +557,10 @@ case ${1} in
 
     getSubnets)
       getSubnets "$@"
+      ;;
+      
+    getKeypairs)
+      getKeypairs "$@"
       ;;
 
     *)
