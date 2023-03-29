@@ -41,7 +41,7 @@
         var aResultValues = [];
         values = values || [];
         for (var i = 0, n = values.length; i < n; i++) {
-          if (values[i].Name == '${settings.ssh_key_name}') {
+          if (values[i].Name === '${settings.ssh_key_name}') {
             return values[i].Name;
           }
         }
