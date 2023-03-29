@@ -256,6 +256,7 @@ getKeypairs(){
     echo
     echo
     echo "VHI Cluster Keypairs"
+    execAction "${OPENSTACK} keypair list"
     ${OPENSTACK} keypair list
 }
 
@@ -379,7 +380,9 @@ configure(){
   getImages
 
   [ -z "${NEW_SSH_KEY_NAME}" ] || { execAction "${OPENSTACK} keypair create ${NEW_SSH_KEY_NAME} --private-key ~/.ssh/id_rsa"; chmod 600 ~/.ssh/id_rsa; }
-
+  
+  getKeypairs
+  
   [[ "x${FORMAT}" == "xjson" ]] && { execResponse "${SUCCESS_CODE}" "Сonfigured successfully"; }
 
 }
