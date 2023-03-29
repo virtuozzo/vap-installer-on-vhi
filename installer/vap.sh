@@ -394,7 +394,7 @@ configure(){
 	      ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
           else
               execAction "${OPENSTACK} keypair create --public-key ~/.ssh/id_rsa.pub ${NEW_SSH_KEY_NAME}";
-	      echo "export SSH_KEY_NAME=${SSH_KEY_NAME}" >> ${VAP_ENVS};
+	      echo "export VAP_SSH_KEY_NAME=${NEW_SSH_KEY_NAME}" >> ${VAP_ENVS};
           fi
       fi
   fi
