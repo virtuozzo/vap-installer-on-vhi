@@ -398,7 +398,7 @@ configure(){
       echo "export VAP_SSH_KEY_NAME=${NEW_SSH_KEY_NAME}" >> ${VAP_ENVS};
   fi
 
-  getKeypairs
+  #getKeypairs
   
   [[ "x${FORMAT}" == "xjson" ]] && { execResponse "${SUCCESS_CODE}" "Сonfigured successfully"; }
 }
