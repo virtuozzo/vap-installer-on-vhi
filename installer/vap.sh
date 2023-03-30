@@ -388,7 +388,7 @@ configure(){
 
   if [ -n "${NEW_SSH_KEY_NAME}" ]; then
       if [ ! -f '~/.ssh/id_rsa' ]; then
-          ssh-keygen -t rsa -N "" -f ~/.ssh/id_rsa; chmod 600 ~/.ssh/id_rsa;
+          execAction "${OPENSTACK} keypair create ${NEW_SSH_KEY_NAME} --private-key ~/.ssh/id_rsa"; chmod 600 ~/.ssh/id_rsa;
       else 
 	  if [ ! -f '~/.ssh/id_rsa.pub' ]; then
 	      ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
