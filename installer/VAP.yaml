@@ -81,7 +81,7 @@ parameters:
     description: /vz volume size for infra host
     constraints:
       - range: { min: 100, max: 5000 }
-        description: must be between 400 and 5000 Gb.
+        description: must be between 100 and 5000 Gb.
     default: 100
     
   user_vz_volume_size:
@@ -89,7 +89,7 @@ parameters:
     description: /vz volume size for user host
     constraints:
       - range: { min: 100, max: 10000 }
-        description: must be between 800 and 10000 Gb.
+        description: must be between 100 and 10000 Gb.
     default: 100
   
   infra_swap_volume_size:
