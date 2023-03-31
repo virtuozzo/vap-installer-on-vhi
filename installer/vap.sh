@@ -14,17 +14,10 @@ USER_FLAVORS_JSON="$BASE_DIR/userFlavors.json"
 IMAGES_JSON="$BASE_DIR/images.json"
 SUBNETS_JSON="$BASE_DIR/subnets.json"
 
-###For production
-#MIN_INFRA_VCPU=8
-#MIN_INFRA_RAM=32000
-#MIN_USER_VCPU=12
-#MIN_USER_RAM=48000
-
-### For testing
-MIN_INFRA_VCPU=1
-MIN_INFRA_RAM=1
+MIN_INFRA_VCPU=2
+MIN_INFRA_RAM=15400
 MIN_USER_VCPU=1
-MIN_USER_RAM=4
+MIN_USER_RAM=7500
 
 OPENSTACK=$(command -v openstack) && OPENSTACK="openstack --insecure" || OPENSTACK="/opt/jelastic-python311/bin/openstack --insecure"
 command -v $OPENSTACK > /dev/null 2>&1 || { echo "openstack command not found"; exit 1; }
