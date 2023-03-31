@@ -541,7 +541,7 @@ echo "             --project - VHI cluster project name the user account belongs
 echo "             --username - VHI cluster account username"
 echo "             --password - VHI cluster account password"
 echo "             --url - VHI cluster API endpoint URL"
-echo "             --vap-stack-name - Specify VHI cluster API endpoint URL"
+echo "             --vap-stack-name - Specify VAP Project Name"
 echo "             --new-ssh-key-name - Specify the name of new SSH key which will be generated (at least 3 symbols required)"
 echo
 echo "   CREATE NEW VAP:"
