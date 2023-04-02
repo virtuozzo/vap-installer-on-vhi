@@ -507,16 +507,20 @@ create(){
 
   if [[ "x${FORMAT}" == "xjson" ]]; then
       execAction "${createcmd}" "Creating new stack";
+      result=$?
   else
       ${createcmd};
+      result=$?
   fi
 
-  web_link=$(getWebinstallerLink ${VAP_STACK_NAME})
+  if [ "$result" -ne 0 ]; then
+      web_link=$(getWebinstallerLink ${VAP_STACK_NAME})
 
-  if [[ "x${FORMAT}" == "xjson" ]]; then
-      execResponse "${SUCCESS_CODE}" "$web_link";
-  else
-      echo "Web Installer Link: $web_link";
+      if [[ "x${FORMAT}" == "xjson" ]]; then
+          execResponse "${SUCCESS_CODE}" "$web_link";
+      else
+          echo "Web Installer Link: $web_link";
+      fi
   fi
 
 }
