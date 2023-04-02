@@ -513,7 +513,7 @@ create(){
       result=$?
   fi
 
-  if [ "$result" -ne 0 ]; then
+  if [ "$result" -eq 0 ]; then
       web_link=$(getWebinstallerLink ${VAP_STACK_NAME})
 
       if [[ "x${FORMAT}" == "xjson" ]]; then
