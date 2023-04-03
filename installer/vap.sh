@@ -13,6 +13,7 @@ INFRA_FLAVORS_JSON="$BASE_DIR/infraFlavors.json"
 USER_FLAVORS_JSON="$BASE_DIR/userFlavors.json"
 IMAGES_JSON="$BASE_DIR/images.json"
 SUBNETS_JSON="$BASE_DIR/subnets.json"
+KEYPAIRS_JSON="$BASE_DIR/keypairs.json"
 
 MIN_INFRA_VCPU=2
 MIN_INFRA_RAM=15400
@@ -248,9 +249,55 @@ getSubnets(){
 }
 
 getKeypairs(){
+  local id=0
+  local keypairs=$(jq -n '[]')
   local cmd="${OPENSTACK} keypair list -f json"
-  local output=$(execReturn "${cmd}" "Getting keypairs list")
-  echo $output > $KEYPAIRS_JSON
+  local full_keypairs=$(execReturn "${cmd}" "Getting keypairs list")
+
+  source ${VAP_ENVS}
+
+  for row in $(echo "${full_keypairs}" | jq -r '.[] | @base64'); do
+    _jq() {
+     echo "${row}" | base64 --decode | jq -r "${1}"
+    }
+    Name=$(_jq '.Name')
+
+    id=$((id+1))
+    Fingerprint=$(_jq '.Fingerprint')
+    Type=$(_jq '.Type')
+
+    keypairs=$(echo $keypairs | jq \
+      --argjson id "$id" \
+      --arg Name "$Name" \
+      --arg Fingerprint "$Fingerprint" \
+      --arg Type  "$Type" \
+    '. += [{"id": $id, "Name": $Name, "Fingerprint": $Fingerprint, "Type": $Type}]')
+  done
+
+  local output="{\"result\": 0, \"keypairs\": ${keypairs}}"
+  echo $keypairs > ${KEYPAIRS_JSON}
+
+  if [[ "x${FORMAT}" == "xjson" ]]; then
+    log "Validation keypairs...done";
+  else
+    seperator=---------------------------------------------------------------------------------------------------
+    rows="%-5s| %-50s| %s\n"
+    TableWidth=100
+    echo -e "\n\nVHI Keypairs List"
+    printf "%.${TableWidth}s\n" "$seperator"
+    printf "%-5s| %-50s| %s\n" ID Name Fingerprint
+    printf "%.${TableWidth}s\n" "$seperator"
+
+    for row in $(echo "${keypairs}" | jq -r '.[] | @base64'); do
+      _jq() {
+        echo "${row}" | base64 --decode | jq -r "${1}"
+      }
+      id=$(_jq '.id')
+      Name=$(_jq '.Name')
+      Fingerprint=$(_jq '.Fingerprint')
+      printf "$rows" "$id" "$Name" "$Fingerprint"
+    done
+  fi
 }
 
 getWebinstallerLink(){
@@ -391,7 +438,7 @@ configure(){
       echo "export VAP_SSH_KEY_NAME=${NEW_SSH_KEY_NAME}" >> ${VAP_ENVS};
   fi
 
-  #getKeypairs
+  getKeypairs
   
   [[ "x${FORMAT}" == "xjson" ]] && { execResponse "${SUCCESS_CODE}" "Сonfigured successfully"; }
 }
