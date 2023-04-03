@@ -211,11 +211,13 @@ getSubnets(){
     grep -qE "(^127\.)|(^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^192\.168\.)|(^169\.254)" <<< $subnet || {
       id=$((id+1))
       Value=$(_jq '.ID')
+      Network=$(_jq '.Network')
       subnets=$(echo $subnets | jq \
         --argjson id "$id" \
         --arg Subnet "$subnet" \
         --arg Value  "$Value" \
-        '. += [{"id": $id, "Subnet": $Subnet, "Value": $Value}]')
+        --arg Network "$Network" \
+        '. += [{"id": $id, "Subnet": $Subnet, "Value": $Value, "Network": $Network}]')
     }
   done
 
@@ -225,12 +227,12 @@ getSubnets(){
   if [[ "x${FORMAT}" == "xjson" ]]; then
     log "Getting subnets...done";
   else
-    seperator=------------------------------------------------
-    rows="%-5s| %s\n"
-    TableWidth=30
+    seperator=---------------------------------------------------------------------------------------------------
+    rows="%-5s| %-50s| %s\n"
+    TableWidth=100
     echo -e "\n\nVHI Cluster Subnets"
     printf "%.${TableWidth}s\n" "$seperator"
-    printf "%-5s| %s\n" ID Subnet
+    printf "%-5s| %-50s| %s\n" ID Subnet Network
     printf "%.${TableWidth}s\n" "$seperator"
 
     for row in $(echo "${subnets}" | jq -r '.[] | @base64'); do
@@ -239,7 +241,8 @@ getSubnets(){
       }
       id=$(_jq '.id')
       Subnet=$(_jq '.Subnet')
-      printf "$rows" "$id" "$Subnet"
+      Network=$(_jq '.Network')
+      printf "$rows" "$id" "$Subnet" "$Network"
     done
   fi
 }
@@ -483,13 +486,14 @@ create(){
   source ${VAP_ENVS}
   IMAGE=$(_getValueById $IMAGE "Value" "images.json")
   SUBNET=$(_getValueById $SUBNET "Value" "subnets.json")
+  NETWORK=$(_getValueById $SUBNET "Network" "subnets.json")
   INFRA_FLAVOR=$(_getValueById $INFRA_FLAVOR "Value" "infraFlavors.json")
   USER_FLAVOR=$(_getValueById $USER_FLAVOR "Value" "userFlavors.json")
 
   local createcmd="${OPENSTACK} stack create ${VAP_STACK_NAME} -t VAP.yaml"
   createcmd+=" --parameter image=${IMAGE}"
   createcmd+=" --parameter user_hosts_count=${USER_HOST_COUNT}"
-  createcmd+=" --parameter public_network=public"
+  createcmd+=" --parameter public_network=${NETWORK}"
   createcmd+=" --parameter public_subnet=${SUBNET}"
   createcmd+=" --parameter infra_flavor=${INFRA_FLAVOR}"
   createcmd+=" --parameter user_flavor=${USER_FLAVOR}"
