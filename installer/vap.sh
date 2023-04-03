@@ -245,12 +245,9 @@ getSubnets(){
 }
 
 getKeypairs(){
-    source ${VAP_ENVS}
-    echo
-    echo
-    echo "VHI Cluster Keypairs"
-    execAction "${OPENSTACK} keypair list"
-    ${OPENSTACK} keypair list
+  local cmd="${OPENSTACK} keypair list -f json"
+  local output=$(execReturn "${cmd}" "Getting keypairs list")
+  echo $output > $KEYPAIRS_JSON
 }
 
 getWebinstallerLink(){
