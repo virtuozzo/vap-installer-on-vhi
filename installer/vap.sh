@@ -485,7 +485,7 @@ create(){
 
   source ${VAP_ENVS}
   IMAGE=$(_getValueById $IMAGE "Value" "images.json")
-  SUBNET=$(_getValueById $SUBNET "Value" "subnets.json")
+  PUBLIC_SUBNET=$(_getValueById $SUBNET "Value" "subnets.json")
   NETWORK=$(_getValueById $SUBNET "Network" "subnets.json")
   INFRA_FLAVOR=$(_getValueById $INFRA_FLAVOR "Value" "infraFlavors.json")
   USER_FLAVOR=$(_getValueById $USER_FLAVOR "Value" "userFlavors.json")
@@ -494,7 +494,7 @@ create(){
   createcmd+=" --parameter image=${IMAGE}"
   createcmd+=" --parameter user_hosts_count=${USER_HOST_COUNT}"
   createcmd+=" --parameter public_network=${NETWORK}"
-  createcmd+=" --parameter public_subnet=${SUBNET}"
+  createcmd+=" --parameter public_subnet=${PUBLIC_SUBNET}"
   createcmd+=" --parameter infra_flavor=${INFRA_FLAVOR}"
   createcmd+=" --parameter user_flavor=${USER_FLAVOR}"
   createcmd+=" --parameter infra_root_volume_size=${INFRA_ROOT_SIZE}"
