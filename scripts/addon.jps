@@ -338,6 +338,7 @@ onInstall:
 actions:
 
   configure:
+    - getScripts
     - if (${settings.ssh_key_check:true}):
         - setGlobals:
             sshCmd: "--new-ssh-key-name=${settings.ssh_key_name}"
@@ -381,30 +382,31 @@ actions:
         pip install python-heatclient
   
   create:
-    script: |
-      var cmd = "bash ${globals.vap_dir}/vap.sh create " +
-      "--infra-flavor=${settings.infra_cpu_ram} " +
-      "--user-flavor=${settings.user_cpu_ram} " +
-      "--subnet=${settings.subnet} " +
-      "--image=${settings.image_name} " +
-      "--user-host-count=${settings.user_node_count} " +
-      "--infra-root-size=${settings.infra_os_storage_size} " +
-      "--infra-vz-size=${settings.infra_vz_storage_size} " +
-      "--user-root-size=${settings.user_os_storage_size} " +
-      "--user-vz-size=${settings.user_vz_storage_size} " +
-      "--infra-swap-size=${settings.infra_swap_storage_size} " +
-      "--user-swap-size=${settings.user_swap_storage_size} " +
-      "--key-name=${settings.ssh_key} " +
-      "--format=json";
-      var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
-      if (resp.result != 0) return resp;
-      try {
-        respOut = JSON.parse(resp.responses[0].out) || [];
-      } catch (ex) {
-        return { type: "error", message: "cannot parse response out: " + ex }
-      }
-      if (respOut.result == 100) return { type: "warning", message: respOut.out };
-      if (respOut.result == 99) return { result: 99 };
-      if (respOut.result == 0) return { type: "success", message: "Web Installer Link: ["+ respOut.out +"]("+ respOut.out +")" };
-      return respOut;
+    - getScripts
+    - script: |
+        var cmd = "bash ${globals.vap_dir}/vap.sh create " +
+        "--infra-flavor=${settings.infra_cpu_ram} " +
+        "--user-flavor=${settings.user_cpu_ram} " +
+        "--subnet=${settings.subnet} " +
+        "--image=${settings.image_name} " +
+        "--user-host-count=${settings.user_node_count} " +
+        "--infra-root-size=${settings.infra_os_storage_size} " +
+        "--infra-vz-size=${settings.infra_vz_storage_size} " +
+        "--user-root-size=${settings.user_os_storage_size} " +
+        "--user-vz-size=${settings.user_vz_storage_size} " +
+        "--infra-swap-size=${settings.infra_swap_storage_size} " +
+        "--user-swap-size=${settings.user_swap_storage_size} " +
+        "--key-name=${settings.ssh_key} " +
+        "--format=json";
+        var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
+        if (resp.result != 0) return resp;
+        try {
+          respOut = JSON.parse(resp.responses[0].out) || [];
+        } catch (ex) {
+          return { type: "error", message: "cannot parse response out: " + ex }
+        }
+        if (respOut.result == 100) return { type: "warning", message: respOut.out };
+        if (respOut.result == 99) return { result: 99 };
+        if (respOut.result == 0) return { type: "success", message: "Web Installer Link: ["+ respOut.out +"]("+ respOut.out +")" };
+        return respOut;
           
