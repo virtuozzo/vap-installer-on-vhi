@@ -277,7 +277,7 @@ settings:
         text: User Node Count
         minWidth: 135
       name: user_node_count
-      min: 1
+      min: 0
       max: 5
 
     - caption: VHI Public Subnet
