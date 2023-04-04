@@ -591,7 +591,7 @@ echo "             --new-ssh-key-name - Specify the name of new SSH key which wi
 echo
 echo "   CREATE NEW VAP:"
 echo "       COMMAND:  "
-echo "             $SCRIPTNAME create --infra-flavor=1 --user-flavor=1 --subnet=1 --image=2 --user-host-count=1 --infra-root-size=100 --infra-vz-size=400 --user-root-size=100 --user-vz-size=800 --infra-swap-size=8 --user-swap-size=8 --key-name=name"
+echo "             $SCRIPTNAME create --infra-flavor=1 --user-flavor=1 --subnet=1 --image=2 --user-host-count=1 --infra-root-size=100 --infra-vz-size=400 --user-root-size=100 --user-vz-size=800 --infra-swap-size=8 --user-swap-size=8 --key-name=key-name"
 echo "       ARGUMENTS:    "
 echo "             --infra-flavor - ID of nfra node flavor "
 echo "             --user-flavor - ID of User node flavor"
