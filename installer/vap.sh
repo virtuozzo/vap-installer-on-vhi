@@ -304,7 +304,7 @@ getWebinstallerLink(){
   local stack_name="$1"
   local cmd="${OPENSTACK} stack output show ${stack_name} webinstaller_link -f value -c output_value "
   local output=$(execReturn "${cmd}" "Getting webinstaller_link for ${stack_name} stack")
-  echo $output | tee -a ${RUN_LOG}
+  echo $output
 }
 
 responseValidate(){
