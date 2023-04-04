@@ -105,7 +105,7 @@ Click **Configure** to confirm.
 
 > **Note:** If you get an error, ensure the add-on is configured correctly (see the previous step).
 
-7\. Click **New VAP** and confirm the creation via popup. You’ll see a notification with a link to the PaaS installer in several minutes.
+7\. Click **New VAP** and confirm the creation via popup. You’ll see a notification with a link to the PaaS installer (also stored in the ***/var/log/installer.log*** file) in several minutes.
 
 ![VAP installer link](images/08-vap-installer-link.png)
 
@@ -146,7 +146,7 @@ sh vap.sh
 - ***new-ssh-key-name*** – name for the public SSH key; if specified, a new key pair will be automatically generated and public key uploaded to VHI cluster (optional)
 
 ```
-sh vap.sh configure --project-domain={domain} --user-domain={domain} --project={project} --username={name} --password={password} --url={url} --vap-stack-name={stack} --new-ssh-key-name={key}
+sh vap.sh configure --project-domain={domain} --user-domain={domain} --project={project} --username={name} --password={password} --url={url} --vap-stack-name={stack} --new-ssh-key-name={SSH key name}
 ```
 
 ![vap.sh configure](images/11-vap-sh-configure.png)
@@ -154,6 +154,11 @@ sh vap.sh configure --project-domain={domain} --user-domain={domain} --project={
 4\. Create the required infrastructure with the `vap.sh create` command. Use the tables from the previous step response to choose the appropriate parameters (according to the [PaaS requirements](https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/)):
 
 - ***infra-flavor*** – infra node flavor (size)
+
+> **For example:** Check the corresponding table from the previous step and select the **ID** of the appropriate flavor. Use the same approach for the *user-flavor*, *subnet*, and *image* parameters below.
+>
+> ![infra node flavor ID](images/11.1-infra-node-flavor-id.png)
+
 - ***user-flavor*** – user node flavor (size)
 - ***subnet*** – VHI cluster's public subnet
 - ***image*** – an image with the PaaS version
@@ -167,12 +172,12 @@ sh vap.sh configure --project-domain={domain} --user-domain={domain} --project={
 - ***key-name*** - public SSH key from the VHI cluster
 
 ```
-sh vap.sh create --infra-flavor={number} --user-flavor={number} --subnet={number} --image={number} --user-host-count={number} --infra-root-size={GB} --infra-vz-size={GB} --user-root-size={GB} --user-vz-size={GB} --infra-swap-size={GB} --user-swap-size={GB} --key-name={key}
+sh vap.sh create --infra-flavor={ID} --user-flavor={ID} --subnet={ID} --image={ID} --user-host-count={number} --infra-root-size={GB} --infra-vz-size={GB} --user-root-size={GB} --user-vz-size={GB} --infra-swap-size={GB} --user-swap-size={GB} --key-name={SSH key name}
 ```
 
 ![vap.sh create](images/12-vap-sh-create.png)
 
-5\. Once completed, you’ll see a web installer link for your PaaS.
+5\. Once completed, you’ll see a web installer link for your PaaS (also stored in the ***/var/log/installer.log*** file).
 
 ![VAP installer CLI link](images/13-vap-installer-cli-link.png)
 
