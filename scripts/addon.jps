@@ -274,9 +274,10 @@ settings:
     - caption: User Node Count
       type: spinner
       tooltip:
-        text: User Node Count
+        text: User Node Count to be created on the IaaS where the Infra nodes are.
         minWidth: 135
       name: user_node_count
+      default: 1
       min: 0
       max: 5
 
