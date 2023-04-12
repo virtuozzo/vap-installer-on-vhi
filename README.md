@@ -17,9 +17,9 @@ Before starting the installation, make the following preparations:
 2\. Upload the latest **VAP qcow2 template** to your cluster via admin UI or CLI. We recommend the latter option as it is faster:
 
 - Login to your physical VHI cluster primary node via SSH.
-- Download the latest VAP qcow2 template with the following command:
+- Download the latest *VAP qcow2* template from the [repository](https://vap-images.virtuozzo.dev/vap-images/latest/). For example, with the following command:
 ```
-wget ftp://ftp.jelastic.com/pub/vap-installer-on-vhi/vap-8-2-4.qcow2
+wget https://vap-images.virtuozzo.dev/vap-images/latest/vap-8.2-4.qcow2
 ```
 - Create an image:
 ```
