@@ -23,7 +23,7 @@ wget https://vap-images.virtuozzo.dev/vap-images/latest/vap-8.2-4.qcow2
 ```
 - Create an image:
 ```
-vinfra service compute image create vap-8-2-4 --disk-format qcow2 --container-format bare --file vap-8-2-4.qcow2 --public --wait
+vinfra service compute image create vap-8.2-4 --disk-format qcow2 --container-format bare --file vap-8.2-4.qcow2 --public --wait
 ```
 
 3\. Check [PaaS requirements](https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/) and, if needed, [create flavors](https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_5_4_admins_guide/index.html#creating-custom-flavors.html) with sufficient resources in your VHI cluster.
