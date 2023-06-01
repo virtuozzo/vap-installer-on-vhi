@@ -14,6 +14,7 @@ USER_FLAVORS_JSON="$BASE_DIR/userFlavors.json"
 IMAGES_JSON="$BASE_DIR/images.json"
 SUBNETS_JSON="$BASE_DIR/subnets.json"
 KEYPAIRS_JSON="$BASE_DIR/keypairs.json"
+VOLUME_TYPES_JSON="$BASE_DIR/storagePolicies.json"
 
 MIN_INFRA_VCPU=2
 MIN_INFRA_RAM=15400
@@ -300,6 +301,59 @@ getKeypairs(){
   fi
 }
 
+getStoragePolicies(){
+  local id=0
+  local volumes=$(jq -n '[]')
+  local cmd="${OPENSTACK} volume type list -f json --insecure"
+  local full_volumes=$(execReturn "${cmd}" "Getting volumes list")
+  full_volumes=$(echo ${full_volumes} | jq 'del(.[] | select(.Name == "EC"))')
+
+  source ${VAP_ENVS}
+
+  for row in $(echo "${full_volumes}" | jq -r '.[] | @base64'); do
+    _jq() {
+     echo "${row}" | base64 --decode | jq -r "${1}"
+    }
+    Name=$(_jq '.Name')
+
+    id=$((id+1))
+    ID=$(_jq '.ID')
+    IsPublic=$(_jq '."Is Public"')
+
+    volumes=$(echo $volumes | jq \
+      --argjson id "$id" \
+      --arg Name "$Name" \
+      --arg ID "$ID" \
+      --arg IsPublic  "$IsPublic" \
+    '. += [{"id": $id, "Name": $Name, "ID": $ID, "Is Public": $IsPublic}]')
+  done
+
+  local output="{\"result\": 0, \"volumes\": ${volumes}}"
+  echo $volumes > ${VOLUME_TYPES_JSON}
+
+  if [[ "x${FORMAT}" == "xjson" ]]; then
+    log "Validation volumes...done";
+  else
+    seperator=---------------------------------------------------------------------------------------------------
+    rows="%-5s| %-50s| %s\n"
+    TableWidth=100
+    echo -e "\n\nVHI Storage Policies List"
+    printf "%.${TableWidth}s\n" "$seperator"
+    printf "%-5s| %-50s| %s\n" ID Name "Is Public"
+    printf "%.${TableWidth}s\n" "$seperator"
+
+    for row in $(echo "${volumes}" | jq -r '.[] | @base64'); do
+      _jq() {
+        echo "${row}" | base64 --decode | jq -r "${1}"
+      }
+      id=$(_jq '.id')
+      Name=$(_jq '.Name')
+      Fingerprint=$(_jq '."Is Public"')
+      printf "$rows" "$id" "$Name" "$IsPublic"
+    done
+  fi
+}
+
 getWebinstallerLink(){
   local stack_name="$1"
   local cmd="${OPENSTACK} stack output show ${stack_name} webinstaller_link -f value -c output_value "
@@ -425,6 +479,7 @@ configure(){
   getUserFlavors
   getSubnets
   getImages
+  getStoragePolicies
 
   if [ -n "${NEW_SSH_KEY_NAME}" ]; then
       if [ ! -f '~/.ssh/id_rsa' ]; then
@@ -468,6 +523,21 @@ create(){
       ;;
       --infra-flavor=*)
       INFRA_FLAVOR=${i#*=}
+      shift
+      shift
+      ;;
+      --root-storage-policy=*)
+      ROOT_STORAGE_POLICY=${i#*=}
+      shift
+      shift
+      ;;
+      --user-storage-policy=*)
+      USER_STORAGE_POLICY=${i#*=}
+      shift
+      shift
+      ;;
+      --infra-storage-policy=*)
+      INFRA_STORAGE_POLICY=${i#*=}
       shift
       shift
       ;;
@@ -536,6 +606,10 @@ create(){
   NETWORK=$(_getValueById $SUBNET "Network" "subnets.json")
   INFRA_FLAVOR=$(_getValueById $INFRA_FLAVOR "Value" "infraFlavors.json")
   USER_FLAVOR=$(_getValueById $USER_FLAVOR "Value" "userFlavors.json")
+  
+  ROOT_STORAGE_POLICY=$(_getValueById $ROOT_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
+  INFRA_STORAGE_POLICY=$(_getValueById $INFRA_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
+  USER_STORAGE_POLICY=$(_getValueById $USER_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
 
   local createcmd="${OPENSTACK} stack create ${VAP_STACK_NAME} -t VAP.yaml"
   createcmd+=" --parameter image=${IMAGE}"
@@ -550,25 +624,61 @@ create(){
   createcmd+=" --parameter user_vz_volume_size=${USER_VZ_SIZE}"
   createcmd+=" --parameter infra_swap_volume_size=${INFRA_SWAP_VOLUME_SIZE}"
   createcmd+=" --parameter user_swap_volume_size=${USER_SWAP_VOLUME_SIZE}"
+  if [ ! -z "${ROOT_STORAGE_POLICY}" ]; then
+      createcmd+=" --parameter storage_policy_root=${ROOT_STORAGE_POLICY}" 
+  fi
+  if [ ! -z "${INFRA_STORAGE_POLICY}" ]; then
+      createcmd+=" --parameter storage_policy_infra_vz=${INFRA_STORAGE_POLICY}"
+  fi
+  if [ ! -z "${USER_STORAGE_POLICY}" ]; then
+      createcmd+=" --parameter storage_policy_user_vz=${USER_STORAGE_POLICY}"
+  fi
   createcmd+=" --parameter key_name=${KEY_NAME}"
   createcmd+=" --wait"
 
+  local checkstackcmd="openstack stack show ${VAP_STACK_NAME}"
+
+  local result="0";
+  
   if [[ "x${FORMAT}" == "xjson" ]]; then
-      execAction "${createcmd}" "Creating new stack";
-      result=$?
+      local message="Checking if ${VAP_STACK_NAME} exists"
+      source ${VAP_ENVS}
+      stdout=$( { ${checkstackcmd}; } 2>&1 ) && { log "${message}...done"; execResponse "99" "Stack ${VAP_STACK_NAME} is not created because it already exists. See ${RUN_LOG} for details."; return 1; } || {
+        log "${message}...not exists\n${stdout}\n";
+      }
+  else
+      ${checkstackcmd} && { execResponse "99" "Stack ${VAP_STACK_NAME} is not created because stack with the same name already exists. See ${RUN_LOG} for details."; return 1; } || { true; }
+  fi
+
+  if [[ "x${FORMAT}" == "xjson" ]]; then
+      local message="Creating new stack"
+      source ${VAP_ENVS}
+      stdout=$( { ${createcmd}; } 2>&1 ) && { log "${message}...done";  } || {
+        result=$?; log "${message}...failed\n${stdout}\n";
+      }
   else
       ${createcmd};
       result=$?
   fi
-
   if [ "$result" -eq 0 ]; then
       web_link=$(getWebinstallerLink ${VAP_STACK_NAME})
-
       if [[ "x${FORMAT}" == "xjson" ]]; then
           execResponse "${SUCCESS_CODE}" "$web_link";
       else
           echo "Web Installer Link: $web_link";
       fi
+  else
+      local deletecmd="${OPENSTACK} stack delete ${VAP_STACK_NAME} --yes --wait"
+      if [[ "x${FORMAT}" == "xjson" ]]; then
+        message="Deletion of failed stack ${VAP_STACK_NAME} artifacts."
+        source ${VAP_ENVS}
+        stdout=$( { ${deletecmd}; } 2>&1 ) && { log "${message}...done";  } || {
+          log "${message}...failed\n${stdout}\n";
+        }
+      else
+        ${deletecmd};
+      fi
+      execResponse "99" "Stack ${VAP_STACK_NAME} creation failed. See ${RUN_LOG} for details.";
   fi
 
 }
@@ -591,10 +701,13 @@ echo "             --new-ssh-key-name - Specify the name of new SSH key which wi
 echo
 echo "   CREATE NEW VAP:"
 echo "       COMMAND:  "
-echo "             $SCRIPTNAME create --infra-flavor=1 --user-flavor=1 --subnet=1 --image=2 --user-host-count=1 --infra-root-size=100 --infra-vz-size=400 --user-root-size=100 --user-vz-size=800 --infra-swap-size=8 --user-swap-size=8 --key-name=key-name"
+echo "             $SCRIPTNAME create --infra-flavor=1 --user-flavor=1 --root-storage-policy=1 --infra-storage-policy=1 --user-storage-policy=1 --subnet=1 --image=2 --user-host-count=1 --infra-root-size=100 --infra-vz-size=400 --user-root-size=100 --user-vz-size=800 --infra-swap-size=8 --user-swap-size=8 --key-name=key-name"
 echo "       ARGUMENTS:    "
-echo "             --infra-flavor - ID of nfra node flavor "
+echo "             --infra-flavor - ID of Infra node flavor "
 echo "             --user-flavor - ID of User node flavor"
+echo "             --root-storage-policy - ID of Infra node volume"
+echo "             --infra-storage-policy - ID of Infra node volume"
+echo "             --user-storage-policy - ID of User node volume"
 echo "             --subnet - ID of public subnet"
 echo "             --image - ID of VAP image available on VHI cluster"
 echo "             --user-host-count - Number of user host nodes to be created"
@@ -633,6 +746,10 @@ case ${1} in
       
     getKeypairs)
       getKeypairs "$@"
+      ;;
+      
+    getStoragePolicies)
+      getStoragePolicies "$@"
       ;;
 
     *)
