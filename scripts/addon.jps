@@ -61,12 +61,11 @@ settings:
         caption: VAP Project Domain 
         tooltip: "<span>Come up with VAP Project Domain Name</span>"
         required: true
-
+        
       - type: toggle
         name: ssh_key_check
         caption: New SSH Key
         tooltip: "<span>If you have no SSH key in VHI cluster tick on the checkbox and come up with SSH key name. A new SSH key pair will be generated and injected into your environment and added to VHI cluster automatically.</span>"
-        required: false
         showIf:
           true:
             - type: string
@@ -77,17 +76,35 @@ settings:
         
   create:
     fields:
-    - caption: SSH Key Name
-      type: list
-      name: ssh_key
-      tooltip:
-        text: "Pick the <b>SSH Key</b> to be injected into Infra and User Nodes (Virtual Machines). If you chose the <b>New SSH Key</b> option on previous <b>Configure</b> step, a new SSH key pair will be generated, and your environment and VHI cluster will be configured automatically for new SSH keypair usage. If you want to use already existing <b>SSH Key</b> available on VHI cluster, please choose among available ones in the list. <a href='https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_4_6_admins_guide/index.html?TocPath=Management%257CManaging%2520the%2520compute%2520cluster%257CManaging%2520virtual%2520machines%257C_____4#adding-ssh-keys.html?TocPath=Management%257CManaging%2520the%2520compute%2520cluster%257CManaging%2520virtual%2520machines%257C_____4' target='_blank'>Learn More</a> about SSH key pairs in VHI cluster.<p></p>"
-    - caption: Installation type
-      type: list
-      name: inst_type
-      default: poc
-      tooltip:
-        text: |
+     - caption: VAP Project Name
+       type: string
+       tooltip:
+         text: VAP Project Name
+         minWidth: 130
+       name: vap_stack_name
+       required: true
+       value: vapStackName
+     - name: image_name
+       caption: VAP Image Name
+       type: list
+       required: true
+       values: imageListPrepared
+       tooltip: 
+         text: "Select required <b>qcow2</b> VAP image name"
+         tipParams:
+         minWidth: 280
+     - name: ssh_key
+       caption: SSH Key Name
+       type: list
+       required: true
+       values: sshKeysPrepared 
+       tooltip: "Pick the <b>SSH Key</b> to be injected into Infra and User Nodes (Virtual Machines). If you chose the <b>New SSH Key</b> option on previous <b>Configure</b> step, a new SSH key pair will be generated, and your environment and VHI cluster will be configured automatically for new SSH keypair usage. If you want to use already existing <b>SSH Key</b> available on VHI cluster, please choose among available ones in the list. <a href='https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_4_6_admins_guide/index.html?TocPath=Management%257CManaging%2520the%2520compute%2520cluster%257CManaging%2520virtual%2520machines%257C_____4#adding-ssh-keys.html?TocPath=Management%257CManaging%2520the%2520compute%2520cluster%257CManaging%2520virtual%2520machines%257C_____4' target='_blank'>Learn More</a> about SSH key pairs in VHI cluster.<p></p>"
+     - caption: Installation type
+       type: list
+       name: inst_type
+       default: poc
+       tooltip:
+         text: |
               Platform types based on the purpose:
               <ul>
                 <li><b>&#x2022; PoC</b> (Proof-of-Concept) - a platform used for feature demonstration or non-complex testing activities
@@ -95,15 +112,24 @@ settings:
                 <li><b>&#x2022; Production</b> - a public or private platform that is used for production purposes
                 <li><b>&#x2022; High-Performance Production</b> - the public cloud platform with extended performance capabilities for demanding end-users
               </ul>  
-        maxWidth: 750
-        minWidth: 750
-      values:
-        poc: PoC
-        sb: Sandbox
-        prod: Production
-        high_prod: High Performance Production
-      showIf:
-        poc:
+         maxWidth: 750
+         minWidth: 750
+       values:
+         poc: PoC
+         sb: Sandbox
+         prod: Production
+         high_prod: High Performance Production
+       showIf:
+         poc:
+          - caption: User Node Count
+            name: user_node_count
+            type: spinner
+            default: 2
+            min: 0
+            max: 5
+            width: 108
+            tooltip:
+              text: "User Node Count to be created on the IaaS where the Infra nodes are."
           - caption: RAM&CPU Infra
             name: infra_cpu_ram
             required: true
@@ -124,7 +150,16 @@ settings:
               tipParams:
               maxWidth: 830
               minWidth: 300
-        sb:
+         sb:
+          - caption: User Node Count
+            name: user_node_count
+            type: spinner
+            default: 1
+            min: 0
+            max: 5
+            width: 108
+            tooltip:
+              text: "User Node Count to be created on the IaaS where the Infra nodes are."
           - caption: RAM&CPU Infra
             name: infra_cpu_ram
             required: true
@@ -145,7 +180,16 @@ settings:
               tipParams:
               maxWidth: 830
               minWidth: 300
-        prod:
+         prod:
+          - caption: User Node Count
+            name: user_node_count
+            type: spinner
+            default: 3
+            min: 0
+            max: 5
+            width: 108
+            tooltip:
+              text: "User Node Count to be created on the IaaS where the Infra nodes are."
           - caption: RAM&CPU Infra
             name: infra_cpu_ram
             required: true
@@ -166,41 +210,40 @@ settings:
               tipParams:
               maxWidth: 830
               minWidth: 300
-        high_prod:
-          - caption: RAM&CPU Infra
-            name: infra_cpu_ram
+         high_prod:
+          - caption: User Node Count
+            name: user_node_count
+            type: spinner
+            default: 3
+            min: 0
+            max: 5
+            width: 108
+            tooltip:
+              text: "User Node Count to be created on the IaaS where the Infra nodes are."
+          - name: infra_cpu_ram
+            caption: RAM&CPU Infra
+            type: list
             required: true
             values: infraFlavorListPrepared
-            type: list
-            tooltip: 
-              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/high-performance-requirements.svg'>"
-              tipParams:
-              maxWidth: 830
-              minWidth: 300
-          - caption: RAM&CPU User
-            name: user_cpu_ram
-            required: true
-            values: userFlavorListPrepared
-            type: list
-            tooltip: 
+            tooltip:
               text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/high-performance-requirements.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
-
-    - caption: VAP Project Name
-      type: string
-      tooltip:
-        text: VAP Project Name
-        minWidth: 130
-      name: vap_stack_name
-      required: true
-      value: vapStackName
-
-    - type: compositefield
-      caption: Infra Storage,GB
-      defaultMargins: "0 12 0 0"
-      tooltip:
+          - name: user_cpu_ram
+            caption: RAM&CPU User
+            type: list
+            required: true
+            values: userFlavorListPrepared      
+            tooltip:
+              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/high-performance-requirements.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+     - type: compositefield
+       caption: Infra Storage,GB
+       defaultMargins: "0 12 0 0"
+       tooltip:
         text: |
               Storage size for '<b>/</b>', '<b>/vz</b>' and '<b>swap</b>' partition for Infra nodes.<br>
               Swap size depends on RAM:
@@ -210,11 +253,12 @@ settings:
                 <li><b>&#x2022;</b> 64+ GB - the swap size is 32 GB
               </ul>
         minWidth: 370        
-      items:
+       items:
         - type: spinner
           name: infra_os_storage_size
           min: 100
           max: 2000
+          width: 109
         - type: displayfield
           markup: "/"
           cls: x-form-item-label
@@ -224,6 +268,7 @@ settings:
           min: 100
           max: 5000
           default: 800
+          width: 108
         - type: displayfield
           markup: "/"
           cls: x-form-item-label
@@ -233,11 +278,12 @@ settings:
           min: 4
           max: 512
           default: 32
+          width: 109
 
-    - type: compositefield
-      caption: User Storage, GB
-      defaultMargins: "0 12 0 0"
-      tooltip:
+     - type: compositefield
+       caption: User Storage, GB
+       defaultMargins: "0 12 0 0"
+       tooltip:
         text: |
               Storage size for '<b>/</b>', '<b>/vz</b>' and '<b>swap</b>' partition for User nodes.<br>
               Swap size depends on RAM:
@@ -247,11 +293,12 @@ settings:
                 <li><b>&#x2022;</b> 64+ GB - the swap size is 32 GB
               </ul>
         minWidth: 370       
-      items:
+       items:
         - type: spinner
           name: user_os_storage_size
           min: 100
           max: 2000
+          width: 108
         - type: displayfield
           markup: "/"
           cls: x-form-item-label
@@ -261,46 +308,28 @@ settings:
           min: 100
           max: 5000
           default: 800
+          width: 108
         - type: displayfield
           markup: "/"
-          cls: x-form-item-label
+          cls: x-form-item-labStorage Policy el
           width: 10
         - type: spinner
           name: user_swap_storage_size
           min: 4
           max: 512
           default: 32
-          
-    - caption: User Node Count
-      type: spinner
-      tooltip:
-        text: User Node Count to be created on the IaaS where the Infra nodes are.
-        minWidth: 135
-      name: user_node_count
-      default: 1
-      min: 0
-      max: 5
+          width: 108
+     - caption: VHI Public Subnet
+       type: list
+       tooltip:
+         text: Select required VHI cluster subnet
+         minWidth: 240
+       name: subnet
+       required: true
+       values: subnetListPrepared      
 
-    - caption: VHI Public Subnet
-      type: list
-      tooltip:
-        text: Select required VHI cluster subnet
-        minWidth: 240
-      name: subnet
-      required: true
-      values: subnetListPrepared
-
-    - caption: VAP Image Name
-      type: list
-      tooltip:
-        text: Select required <b>qcow2</b> VAP image name
-        minWidth: 270
-      name: image_name
-      required: true
-      values: imageListPrepared
-      
-    onBeforeInit: scripts/createOnBeforeInit.js?_r=${fn.random}
-
+    onBeforeInit: https://raw.githubusercontent.com/DmytroZubelevych/vap-installer-on-vhi/master/scripts/createOnBeforeInitPolicies.js
+     
 buttons:
 - caption: Configure
   action: configure
@@ -398,6 +427,9 @@ actions:
         "--infra-swap-size=${settings.infra_swap_storage_size} " +
         "--user-swap-size=${settings.user_swap_storage_size} " +
         "--key-name=${settings.ssh_key} " +
+        "--root-storage-policy=${settings.root_storage_policy} " +
+        "--infra-storage-policy=${settings.infra_storage_policy} " +
+        "--user-storage-policy=${settings.user_storage_policy} " +
         "--format=json";
         var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
         if (resp.result != 0) return resp;
@@ -410,4 +442,3 @@ actions:
         if (respOut.result == 99) return { result: 99 };
         if (respOut.result == 0) return { type: "success", message: "Web Installer Link: ["+ respOut.out +"]("+ respOut.out +")" };
         return respOut;
-          
