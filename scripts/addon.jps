@@ -328,7 +328,7 @@ settings:
        required: true
        values: subnetListPrepared      
 
-    onBeforeInit: https://raw.githubusercontent.com/DmytroZubelevych/vap-installer-on-vhi/master/scripts/createOnBeforeInitPolicies.js
+    onBeforeInit: https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/scripts/createOnBeforeInitPolicies.js
      
 buttons:
 - caption: Configure
