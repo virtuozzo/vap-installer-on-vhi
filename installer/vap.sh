@@ -541,6 +541,11 @@ create(){
       shift
       shift
       ;;
+      --vap-platform-data-storage-policy=*)
+      VAP_PLATFORM_DATA_STORAGE_POLICY=${i#*=}
+      shift
+      shift
+      ;;
       --infra-root-size=*)
       INFRA_ROOT_SIZE=${i#*=}
       shift
@@ -558,6 +563,11 @@ create(){
       ;;
       --user-vz-size=*)
       USER_VZ_SIZE=${i#*=}
+      shift
+      shift
+      ;;
+      --vap-platform-data-size=*)
+      VAP_PLATFORM_DATA_SIZE=${i#*=}
       shift
       shift
       ;;
@@ -584,7 +594,8 @@ create(){
   if [ -z "${IMAGE}" ] || [ -z "${USER_HOST_COUNT}" ] || \
      [ -z "${SUBNET}" ] ||  [ -z "${USER_FLAVOR}" ] || \
      [ -z "${INFRA_FLAVOR}" ] ||  [ -z "${INFRA_ROOT_SIZE}" ] || \
-     [ -z "${USER_ROOT_SIZE}" ] ||  [ -z "${INFRA_VZ_SIZE}" ] || [ -z "${USER_VZ_SIZE}" ]; then
+     [ -z "${USER_ROOT_SIZE}" ] ||  [ -z "${INFRA_VZ_SIZE}" ] || [ -z "${USER_VZ_SIZE}" ] || \
+     [ -z "${VAP_PLATFORM_DATA_SIZE}" ]; then
 
       echo "Not all arguments passed!"
       usage
@@ -610,6 +621,7 @@ create(){
   ROOT_STORAGE_POLICY=$(_getValueById $ROOT_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
   INFRA_STORAGE_POLICY=$(_getValueById $INFRA_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
   USER_STORAGE_POLICY=$(_getValueById $USER_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
+  VAP_PLATFORM_DATA_STORAGE_POLICY=$(_getValueById $VAP_PLATFORM_DATA_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
 
   local createcmd="${OPENSTACK} stack create ${VAP_STACK_NAME} -t VAP.yaml"
   createcmd+=" --parameter image=${IMAGE}"
@@ -622,6 +634,7 @@ create(){
   createcmd+=" --parameter user_root_volume_size=${USER_ROOT_SIZE}"
   createcmd+=" --parameter infra_vz_volume_size=${INFRA_VZ_SIZE}"
   createcmd+=" --parameter user_vz_volume_size=${USER_VZ_SIZE}"
+  createcmd+=" --parameter vap_platform_data_volume_size=${VAP_PLATFORM_DATA_SIZE}"
   createcmd+=" --parameter infra_swap_volume_size=${INFRA_SWAP_VOLUME_SIZE}"
   createcmd+=" --parameter user_swap_volume_size=${USER_SWAP_VOLUME_SIZE}"
   if [ ! -z "${ROOT_STORAGE_POLICY}" ]; then
@@ -632,6 +645,9 @@ create(){
   fi
   if [ ! -z "${USER_STORAGE_POLICY}" ]; then
       createcmd+=" --parameter storage_policy_user_vz=${USER_STORAGE_POLICY}"
+  fi
+  if [ ! -z "${VAP_PLATFORM_DATA_STORAGE_POLICY}" ]; then
+      createcmd+=" --parameter storage_policy_vap_platform_data=${VAP_PLATFORM_DATA_STORAGE_POLICY}"
   fi
   createcmd+=" --parameter key_name=${KEY_NAME}"
   createcmd+=" --wait"
@@ -701,20 +717,22 @@ echo "             --new-ssh-key-name - Specify the name of new SSH key which wi
 echo
 echo "   CREATE NEW VAP:"
 echo "       COMMAND:  "
-echo "             $SCRIPTNAME create --infra-flavor=1 --user-flavor=1 --root-storage-policy=1 --infra-storage-policy=1 --user-storage-policy=1 --subnet=1 --image=2 --user-host-count=1 --infra-root-size=100 --infra-vz-size=400 --user-root-size=100 --user-vz-size=800 --infra-swap-size=8 --user-swap-size=8 --key-name=key-name"
+echo "             $SCRIPTNAME create --infra-flavor=1 --user-flavor=1 --root-storage-policy=1 --infra-storage-policy=1 --user-storage-policy=1 --vap-platform-data-storage-policy=1 --subnet=1 --image=2 --user-host-count=1 --infra-root-size=100 --infra-vz-size=400 --user-root-size=100 --user-vz-size=800 --vap-platform-data-size=300 --infra-swap-size=8 --user-swap-size=8 --key-name=key-name"
 echo "       ARGUMENTS:    "
 echo "             --infra-flavor - ID of Infra node flavor "
 echo "             --user-flavor - ID of User node flavor"
-echo "             --root-storage-policy - ID of Infra node volume"
-echo "             --infra-storage-policy - ID of Infra node volume"
-echo "             --user-storage-policy - ID of User node volume"
+echo "             --root-storage-policy - ID of Infra node volume storage policy"
+echo "             --infra-storage-policy - ID of Infra node volume storage policy"
+echo "             --user-storage-policy - ID of User node volume storage policy"
+echo "             --vap-platform-data-storage-policy - ID of VAP platform data volume storage policy"
 echo "             --subnet - ID of public subnet"
 echo "             --image - ID of VAP image available on VHI cluster"
 echo "             --user-host-count - Number of user host nodes to be created"
 echo "             --infra-root-size - Infra node storage volume size in GB"
 echo "             --infra-vz-size - Infra node storage volume size in GB"
 echo "             --user-root-size - User node storage volume size in GB"
-echo "             --user-vz-size - User node  storage volume size in GB"
+echo "             --user-vz-size - User node storage volume size in GB"
+echo "             --vap-platform-data-vz-size - VAP data storage volume size in GB"
 echo "             --infra-swap-size - Infra node swap size in GB"
 echo "                  Storage size for swap partition for Infra nodes.<br>"
 echo "                  Swap size depends on RAM:"

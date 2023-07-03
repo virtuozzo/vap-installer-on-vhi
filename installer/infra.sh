@@ -13,7 +13,8 @@ bash /root/jelastic_installer.sh \
 --lets_encrypt TRY \
 --containers "zookeeper,jelastic-db,jelcore:2,gate:2:2,jbilling:2,jstatistic:2,hcore:2,awakener,uploader,puppet,resolver:2,webgate:2,msa,backuper,zabbix" \
 --infra2_ip $infra2_internal_ip \
---disks_to_mount "1:swap,2:/vz" \
+--disks_to_mount "1:swap,2:/vap-platform,3:/vz" \
 --hd_requirement_warning "NO" \
+--docker_cache_folder "/vap-platform/docker" \
 --skiparping >> /var/log/install.log 2>&1
 

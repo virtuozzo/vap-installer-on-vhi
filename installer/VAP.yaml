@@ -60,6 +60,11 @@ parameters:
     description: Storage policy used for user VM's /vz volumes.
     default: default
 
+  storage_policy_vap_platform_data:
+    type: string
+    description: Storage policy used for user VM's /vz volumes.
+    default: default
+
   infra_root_volume_size:
     type: number
     description: Root volume size for infra host
@@ -91,7 +96,15 @@ parameters:
       - range: { min: 100, max: 10000 }
         description: must be between 100 and 10000 Gb.
     default: 100
-  
+
+  vap_platform_data_volume_size:
+    type: number
+    description: Volume size for uploader and docker cache
+    constraints:
+      - range: { min: 100, max: 2500 }
+        description: must be between 100 and 2500 Gb.
+    default: 300
+
   infra_swap_volume_size:
     type: number
     description: Swap size for infra host
@@ -195,6 +208,13 @@ resources:
       size: { get_param: infra_swap_volume_size }
       volume_type: { get_param: storage_policy_root }
 
+  volume_vap_platform_data:
+    type: OS::Cinder::Volume
+    properties:
+      size: { get_param: vap_platform_data_volume_size }
+      volume_type: { get_param: storage_policy_vap_platform_data}
+
+
   infra1:
     type: OS::Nova::Server
     depends_on: [ port_private_infra2, port_public_infra2 ]
@@ -215,6 +235,9 @@ resources:
           volume_id: { get_resource: volume_swap_infra1 }
           delete_on_termination: true
         - boot_index: 2
+          volume_id: { get_resource: volume_vap_platform_data }
+          delete_on_termination: true
+        - boot_index: 3
           image: { get_param: image }
           volume_size: { get_param: infra_vz_volume_size }
           volume_type: { get_param: storage_policy_infra_vz }
