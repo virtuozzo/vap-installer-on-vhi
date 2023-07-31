@@ -156,7 +156,7 @@ getImages(){
     }
     Name=$(_jq '.Name')
 
-    grep -qE "^vap-8-3-2" <<< ${Name} && {
+    grep -qE "^vap-[0-9].[0-9]-[0-9]" <<< ${Name} && {
       id=$((id+1))
       Status=$(_jq '.Status')
       Value=$(_jq '.ID')
@@ -366,7 +366,9 @@ responseValidate(){
   local errorsArray="HTTP 401:Your credentials are incorrect or have expired,"
   errorsArray+="HTTP 404:API version is incorrect,"
   errorsArray+="Name or service not known:API endpoint URL is invalid"
-
+  errorsArray+="could not be found. (HTTP 400)"
+  errorsArray+="ConflictException: 409: Client Error"
+  
   while read -d, -r pair; do
     IFS=':' read -r key val <<<"$pair"
     grep -q "$key" <<< "$response" && {

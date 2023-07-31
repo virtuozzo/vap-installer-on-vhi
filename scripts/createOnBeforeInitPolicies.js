@@ -1,3 +1,7 @@
+var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
+    "command": "bash /var/www/webroot/reconfigure.sh"
+}]), true);
+if (resp.result != 0) return resp;
 var infraFlavorList = getJsonFromFile("infraFlavors.json");
 var infraFlavorListPrepared = prepareFlavorsList(JSON.parse(infraFlavorList));
 var storagePoliciesList = getJsonFromFile("storagePolicies.json");
@@ -11,10 +15,10 @@ var subnetListPrepared = prepareSubnetList(JSON.parse(subnetsList));
 var sshKeys = getSSHKeysList();
 var sshKeysPrepared = prepareSSHKeysList(JSON.parse(sshKeys));
 var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
-    command: 'source .vapenv && echo $VAP_STACK_NAME'
+    command: '[ -f /var/www/webroot/.vapenv ] && source /var/www/webroot/.vapenv; echo $VAP_STACK_NAME'
 }]), true).responses[0].out;
 var currentSSHKey = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
-    command: 'source .vapenv && echo $VAP_SSH_KEY_NAME'
+    command: '[ -f /var/www/webroot/.vapenv ] && source /var/www/webroot/.vapenv; echo $VAP_SSH_KEY_NAME'
 }]), true).responses[0].out;
 
 function getJsonFromFile(jsonFile) {
@@ -27,7 +31,7 @@ function getJsonFromFile(jsonFile) {
 }
 
 function getSSHKeysList() {
-    var cmd = "source .vapenv; /opt/jelastic-python311/bin/openstack keypair list -f json"
+    var cmd = "[ -f /var/www/webroot/.vapenv ] && { source /var/www/webroot/.vapenv; /opt/jelastic-python311/bin/openstack keypair list -f json; } || echo '{}'"
     var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
         "command": cmd
     }]), true);
@@ -157,6 +161,16 @@ settings.fields.push(
         "values": storagePoliciesListPrepared
       }
     ]
+  },
+  {
+     "name": "vap_platform_data_storage_policy",
+     "caption": "Storage Policy: VAP Platform Data",
+     "type": "list",
+     "required": true,
+     "values": storagePoliciesListPrepared,
+     "tooltip": {
+       "text": "A storage policy is a group of parameters that define how to store VM volumes: a tier, a failure domain, and a redundancy mode. A storage policy can also be used to limit the bandwidth or IOPS of the volume.\nYou may check storage policy details with VHI cluster admin. <a href='https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_5_0_admins_guide/index.html#managing-storage-policies.html' target='_blank'>Learn More</a><p></p>\n"
+     },
   }
 );
 

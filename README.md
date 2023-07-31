@@ -12,7 +12,7 @@ This project helps you create PaaS (Virtuozzo Application Platform or VAP) on to
 
 Before starting the installation, make the following preparations:
 
-1\. Get **VHI/VHC cluster** account and obtain a **Virtuozzo Application Platform license**  ([send a request](https://forms.office.com/e/4F667yc4j3)).
+1\. Get **VHI/VHC cluster** account and obtain a **Virtuozzo Application Platform license**.
 
 2\. Upload the latest **VAP qcow2 template** to your cluster via admin UI or CLI. We recommend the latter option as it is faster:
 
@@ -189,7 +189,7 @@ Open the URL and complete the installation via web installer.
 Web installer for Virtuozzo Application Platform automates all the operations required to get the PaaS. You just need to provide the following data before the star:
 
 - ***System User Email*** – specify the email for the platform admin user
-- ***License Key*** – provide a license key for the business edition of the PaaS (obtained from the Support Team via the [form](https://forms.office.com/e/4F667yc4j3))
+- ***License Key*** – provide a license key for the business edition of the PaaS (obtained from the Support Team)
 - ***Platform Entry Point IP*** – automatically obtained from the previously provided data (not editable)
 - ***Domain*** – specify the preferred domain name for the platform; use the **Custom Domain** toggle to:
   - *disabled* – provide a third-level domain name for the default DNS zone with an automatic delegation
