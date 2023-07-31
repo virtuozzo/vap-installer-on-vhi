@@ -156,7 +156,7 @@ getImages(){
     }
     Name=$(_jq '.Name')
 
-    grep -qE "^vap-[0-9].[0-9]-[0-9]" <<< ${Name} && {
+    grep -qE "^vap-8-3-2" <<< ${Name} && {
       id=$((id+1))
       Status=$(_jq '.Status')
       Value=$(_jq '.ID')
