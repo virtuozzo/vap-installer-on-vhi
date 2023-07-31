@@ -4,7 +4,6 @@ id: vap-installer-addon
 targetEditions: any 
 logo: /images/logo-small.png
 description: Provision VHI infrastructure and deploy a new VAP on it
-baseUrl: https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master
 
 targetNodes:
   nodeType:
@@ -14,6 +13,7 @@ globals:
   vap_dir: /var/www/webroot
   vap_settings: /var/www/webroot/.vapenv
   openstack: /opt/jelastic-python311/bin/openstack
+  installerBaseUrl: ${settings.installerBaseUrl}
 
 settings:
   configure:
@@ -136,7 +136,7 @@ settings:
             values: infraFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/poc-requirements.svg'>"
+              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/poc-requirements-w-uploader-docker.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -146,7 +146,19 @@ settings:
             values: userFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/poc-requirements.svg'>"
+              text: "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/poc-requirements-w-uploader-docker.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+          - caption: Uploader & Docker Cache Size,GB
+            name: upload_docker_cache_size
+            type: spinner
+            default: 300
+            min: 1
+            max: 3000
+            width: 108
+            tooltip:
+              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -166,7 +178,7 @@ settings:
             values: infraFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/sandbox-requirements.svg'>"
+              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/sandbox-requirements-w-uploader-docker.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -176,7 +188,19 @@ settings:
             values: userFlavorListPrepared
             type: list
             tooltip: 
-              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/sandbox-requirements.svg'>"
+              text: "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/sandbox-requirements-w-uploader-docker.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+          - caption: Uploader & Docker Cache Size,GB
+            name: upload_docker_cache_size
+            type: spinner
+            default: 300
+            min: 1
+            max: 3000
+            width: 108
+            tooltip:
+              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -196,7 +220,7 @@ settings:
             values: infraFlavorListPrepared
             type: list
             tooltip: 
-              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/performance-requirements.svg'>"
+              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/performance-requirements-w-uploader-docker.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -206,7 +230,19 @@ settings:
             values: userFlavorListPrepared
             type: list
             tooltip: 
-              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/performance-requirements.svg'>"
+              text: " <h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/performance-requirements-w-uploader-docker.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+          - caption: Uploader & Docker Cache Size,GB
+            name: upload_docker_cache_size
+            type: spinner
+            default: 1000
+            min: 1
+            max: 3000
+            width: 108
+            tooltip:
+              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -226,7 +262,7 @@ settings:
             required: true
             values: infraFlavorListPrepared
             tooltip:
-              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/high-performance-requirements.svg'>"
+              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/high-performance-requirements-w-uploader-docker.svg'>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -236,7 +272,19 @@ settings:
             required: true
             values: userFlavorListPrepared      
             tooltip:
-              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/high-performance-requirements.svg'>"
+              text: "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/images/high-performance-requirements-w-uploader-docker.svg'>"
+              tipParams:
+              maxWidth: 830
+              minWidth: 300
+          - caption: Uploader & Docker Cache Size,GB
+            name: upload_docker_cache_size
+            type: spinner
+            default: 2000
+            min: 1
+            max: 3000
+            width: 108
+            tooltip:
+              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -400,11 +448,12 @@ actions:
 
   getScripts:
     cmd[cp]: |-
-      wget ${baseUrl}/installer/VAP.yaml -O ${globals.vap_dir}/VAP.yaml;
-      wget ${baseUrl}/installer/VAP_user.yaml -O ${globals.vap_dir}/VAP_user.yaml;
-      wget ${baseUrl}/installer/infra.sh -O ${globals.vap_dir}/infra.sh;
-      wget ${baseUrl}/installer/user.sh -O ${globals.vap_dir}/user.sh;
-      wget ${baseUrl}/installer/vap.sh -O ${globals.vap_dir}/vap.sh;
+      wget ${globals.installerBaseUrl}/installer/VAP.yaml -O ${globals.vap_dir}/VAP.yaml;
+      wget ${globals.installerBaseUrl}/installer/VAP_user.yaml -O ${globals.vap_dir}/VAP_user.yaml;
+      wget ${globals.installerBaseUrl}/installer/infra.sh -O ${globals.vap_dir}/infra.sh;
+      wget ${globals.installerBaseUrl}/installer/user.sh -O ${globals.vap_dir}/user.sh;
+      wget ${globals.installerBaseUrl}/installer/vap.sh -O ${globals.vap_dir}/vap.sh;
+      wget ${globals.installerBaseUrl}/installer/reconfigure.sh -O ${globals.vap_dir}/reconfigure.sh;
 
   installOSclient: 
     - cmd[cp]: |- 
@@ -430,6 +479,8 @@ actions:
         "--root-storage-policy=${settings.root_storage_policy} " +
         "--infra-storage-policy=${settings.infra_storage_policy} " +
         "--user-storage-policy=${settings.user_storage_policy} " +
+        "--vap-platform-data-storage-policy=${settings.vap_platform_data_storage_policy} "+
+        "--vap-platform-data-size=${settings.upload_docker_cache_size} "+
         "--format=json";
         var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
         if (resp.result != 0) return resp;

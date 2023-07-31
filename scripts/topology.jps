@@ -4,7 +4,6 @@ id: vap-installer
 targetEditions: any 
 logo: /images/logo-small.png
 description: Get your PaaS installed in a minutes on top of any publicly accessible VHI cluster or in Virtuozzo Hybrid Cloud in automatic mode. After application installation open VAP Installer Add-On, provide credentials, endpoint and create infrastructure for Virtuozzo Application Platform. Then proceed to the Webinstaller URL to deploy new VAP installation. Make sure that you have a valid VAP license before installation.
-baseUrl: https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master
 
 nodes:
   - nodeType: apache-python
@@ -13,5 +12,11 @@ nodes:
 onInstall:
   - cmd[cp]: echo 'export PATH=$PATH:/opt/jelastic-python311/bin/' >> /var/www/webroot/.bash_profile
     user: root
-  - install: /scripts/addon.jps?_r=${fn.random}
+  - install: ${settings.installerBaseUrl}/scripts/addon.jps?_r=${fn.random}
     nodeGroup: cp
+    settings:
+      installerBaseUrl: ${settings.installerBaseUrl} 
+  - cmd[cp]: |-
+      for i in flavors.json images.json infraFlavors.json keypairs.json storagePolicies.json subnets.json userFlavors.json; do
+          echo '{}' > /var/www/webroot/${i};
+      done
