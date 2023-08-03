@@ -12,10 +12,8 @@ nodes:
 onInstall:
   - cmd[cp]: echo 'export PATH=$PATH:/opt/jelastic-python311/bin/' >> /var/www/webroot/.bash_profile
     user: root
-  - install: ${settings.installerBaseUrl}/scripts/addon.jps?_r=${fn.random}
+  - install: addon.jps?_r=${fn.random}
     nodeGroup: cp
-    settings:
-      installerBaseUrl: ${settings.installerBaseUrl} 
   - cmd[cp]: |-
       for i in flavors.json images.json infraFlavors.json keypairs.json storagePolicies.json subnets.json userFlavors.json; do
           echo '{}' > /var/www/webroot/${i};
