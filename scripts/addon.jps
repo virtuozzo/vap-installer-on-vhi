@@ -13,7 +13,6 @@ globals:
   vap_dir: /var/www/webroot
   vap_settings: /var/www/webroot/.vapenv
   openstack: /opt/jelastic-python311/bin/openstack
-  installerBaseUrl: ${settings.installerBaseUrl}
 
 settings:
   configure:
@@ -62,18 +61,8 @@ settings:
         tooltip: "<span>Come up with VAP Project Domain Name</span>"
         required: true
         
-      - type: toggle
-        name: ssh_key_check
-        caption: New SSH Key
-        tooltip: "<span>If you have no SSH key in VHI cluster tick on the checkbox and come up with SSH key name. A new SSH key pair will be generated and injected into your environment and added to VHI cluster automatically.</span>"
-        showIf:
-          true:
-            - type: string
-              name: ssh_key_name
-              caption: New SSH Key Name
-              required: true
-              tooltip: "Minimum length of 3 symbols is required."
-        
+    onBeforeInit: configureOnBeforeInit.js  
+      
   create:
     fields:
      - caption: VAP Project Name
@@ -376,7 +365,7 @@ settings:
        required: true
        values: subnetListPrepared      
 
-    onBeforeInit: https://raw.githubusercontent.com/virtuozzo/vap-installer-on-vhi/master/scripts/createOnBeforeInitPolicies.js
+    onBeforeInit: createOnBeforeInitPolicies.js
      
 buttons:
 - caption: Configure
@@ -405,6 +394,9 @@ responses:
       Please check the **/var/log/installer.log** log file for details. 
 
 onInstall:
+  - script: "return { result: 0, baseUrl: '${baseUrl}'.replace('scripts/', '') }"
+  - setGlobals:
+      baseUrl: ${response.baseUrl}  
   - cmd[cp]: |-
       echo "VAP installer add-on logs" > /var/log/installer.log;
       chown jelastic /var/log/installer.log;
@@ -414,7 +406,6 @@ onInstall:
   - getScripts
 
 actions:
-
   configure:
     - getScripts
     - if (${settings.ssh_key_check:true}):
@@ -423,66 +414,67 @@ actions:
     - else:
         - setGlobals:
             sshCmd: ""
-    - script: |
-        var cmd = "bash ${globals.vap_dir}/vap.sh configure " +
-        "--project-domain=${settings.vhi_proj_domain_name} " +
-        "--user-domain=${settings.vhi_user_domain_name} " +
-        "--project=${settings.vhi_proj_name} " +
-        "--username=${settings.vhi_username} " +
-        "--password=${settings.vhi_password} " +
-        "--url=${settings.vhi_url} " +
-        "--vap-stack-name=${settings.vap_stack_name} " +
-        "${globals.sshCmd} " +
-        "--format=json";
-        var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
+    - configureCmd: >-
+        bash ${globals.vap_dir}/vap.sh configure 
+        --project-domain=${settings.vhi_proj_domain_name} 
+        --user-domain=${settings.vhi_user_domain_name} 
+        --project=${settings.vhi_proj_name} 
+        --username=${settings.vhi_username} 
+        --password=${settings.vhi_password} 
+        --url=${settings.vhi_url} 
+        --vap-stack-name=${settings.vap_stack_name} 
+        ${globals.sshCmd} --format=json
+      script: |
+        var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: configureCmd }]), true);
         if (resp.result != 0) return resp;
         try {
           respOut = JSON.parse(resp.responses[0].out) || [];
         } catch (ex) {
           return { type: "error", message: "cannot parse response out: " + ex }
         }
-        if (respOut.result == 100) return { type: "warning", message: respOut.out };
+        if (respOut.result == 100) return { type: "error", message: respOut.out };
         if (respOut.result == 99) return { result: 99 };
         if (respOut.result == 0) return { result: 0 };
         return respOut;
 
   getScripts:
     cmd[cp]: |-
-      wget ${globals.installerBaseUrl}/installer/VAP.yaml -O ${globals.vap_dir}/VAP.yaml;
-      wget ${globals.installerBaseUrl}/installer/VAP_user.yaml -O ${globals.vap_dir}/VAP_user.yaml;
-      wget ${globals.installerBaseUrl}/installer/infra.sh -O ${globals.vap_dir}/infra.sh;
-      wget ${globals.installerBaseUrl}/installer/user.sh -O ${globals.vap_dir}/user.sh;
-      wget ${globals.installerBaseUrl}/installer/vap.sh -O ${globals.vap_dir}/vap.sh;
-      wget ${globals.installerBaseUrl}/installer/reconfigure.sh -O ${globals.vap_dir}/reconfigure.sh;
+      wget ${globals.baseUrl}/installer/VAP.yaml -O ${globals.vap_dir}/VAP.yaml;
+      wget ${globals.baseUrl}/installer/VAP_user.yaml -O ${globals.vap_dir}/VAP_user.yaml;
+      wget ${globals.baseUrl}/installer/infra.sh -O ${globals.vap_dir}/infra.sh;
+      wget ${globals.baseUrl}/installer/user.sh -O ${globals.vap_dir}/user.sh;
+      wget ${globals.baseUrl}/installer/vap.sh -O ${globals.vap_dir}/vap.sh;
+      wget ${globals.baseUrl}/installer/reconfigure.sh -O ${globals.vap_dir}/reconfigure.sh;
 
   installOSclient: 
     - cmd[cp]: |- 
         pip install python-openstackclient
         pip install python-heatclient
-  
+
   create:
     - getScripts
-    - script: |
-        var cmd = "bash ${globals.vap_dir}/vap.sh create " +
-        "--infra-flavor=${settings.infra_cpu_ram} " +
-        "--user-flavor=${settings.user_cpu_ram} " +
-        "--subnet=${settings.subnet} " +
-        "--image=${settings.image_name} " +
-        "--user-host-count=${settings.user_node_count} " +
-        "--infra-root-size=${settings.infra_os_storage_size} " +
-        "--infra-vz-size=${settings.infra_vz_storage_size} " +
-        "--user-root-size=${settings.user_os_storage_size} " +
-        "--user-vz-size=${settings.user_vz_storage_size} " +
-        "--infra-swap-size=${settings.infra_swap_storage_size} " +
-        "--user-swap-size=${settings.user_swap_storage_size} " +
-        "--key-name=${settings.ssh_key} " +
-        "--root-storage-policy=${settings.root_storage_policy} " +
-        "--infra-storage-policy=${settings.infra_storage_policy} " +
-        "--user-storage-policy=${settings.user_storage_policy} " +
-        "--vap-platform-data-storage-policy=${settings.vap_platform_data_storage_policy} "+
-        "--vap-platform-data-size=${settings.upload_docker_cache_size} "+
-        "--format=json";
-        var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: cmd }]), true);
+    - createCmd: >-
+        bash ${globals.vap_dir}/vap.sh create 
+        --infra-flavor=${settings.infra_cpu_ram} 
+        --user-flavor=${settings.user_cpu_ram} 
+        --subnet=${settings.subnet} 
+        --image=${settings.image_name} 
+        --user-host-count=${settings.user_node_count} 
+        --infra-root-size=${settings.infra_os_storage_size} 
+        --infra-vz-size=${settings.infra_vz_storage_size} 
+        --user-root-size=${settings.user_os_storage_size} 
+        --user-vz-size=${settings.user_vz_storage_size} 
+        --infra-swap-size=${settings.infra_swap_storage_size} 
+        --user-swap-size=${settings.user_swap_storage_size} 
+        --key-name=${settings.ssh_key} 
+        --root-storage-policy=${settings.root_storage_policy}
+        --infra-storage-policy=${settings.infra_storage_policy} 
+        --user-storage-policy=${settings.user_storage_policy} 
+        --vap-platform-data-storage-policy=${settings.vap_platform_data_storage_policy} 
+        --vap-platform-data-size=${settings.upload_docker_cache_size} 
+        --format=json
+      script: |
+        var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: createCmd }]), true);
         if (resp.result != 0) return resp;
         try {
           respOut = JSON.parse(resp.responses[0].out) || [];
@@ -492,4 +484,4 @@ actions:
         if (respOut.result == 100) return { type: "warning", message: respOut.out };
         if (respOut.result == 99) return { result: 99 };
         if (respOut.result == 0) return { type: "success", message: "Web Installer Link: ["+ respOut.out +"]("+ respOut.out +")" };
-        return respOut;
+        return respOut; 
