@@ -12,5 +12,5 @@ nodes:
 onInstall:
   - cmd[cp]: echo 'export PATH=$PATH:/opt/jelastic-python311/bin/' >> /var/www/webroot/.bash_profile
     user: root
-  - install: /scripts/addon.jps?_r=${fn.random}
+  - install: /addon.jps?_r=${fn.random}
     nodeGroup: cp
