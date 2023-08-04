@@ -348,6 +348,9 @@ responses:
       Please check the **/var/log/installer.log** log file for details. 
 
 onInstall:
+  - script: "return { result: 0, baseUrl: '${baseUrl}'.replace('scripts/', '') }"
+  - setGlobals:
+      baseUrl: ${response.baseUrl}  
   - cmd[cp]: |-
       echo "VAP installer add-on logs" > /var/log/installer.log;
       chown jelastic /var/log/installer.log;
@@ -391,11 +394,11 @@ actions:
 
   getScripts:
     cmd[cp]: |-
-      wget ${baseUrl}/installer/VAP.yaml -O ${globals.vap_dir}/VAP.yaml;
-      wget ${baseUrl}/installer/VAP_user.yaml -O ${globals.vap_dir}/VAP_user.yaml;
-      wget ${baseUrl}/installer/infra.sh -O ${globals.vap_dir}/infra.sh;
-      wget ${baseUrl}/installer/user.sh -O ${globals.vap_dir}/user.sh;
-      wget ${baseUrl}/installer/vap.sh -O ${globals.vap_dir}/vap.sh;
+      wget ${globals.baseUrl}/installer/VAP.yaml -O ${globals.vap_dir}/VAP.yaml;
+      wget ${globals.baseUrl}/installer/VAP_user.yaml -O ${globals.vap_dir}/VAP_user.yaml;
+      wget ${globals.baseUrl}/installer/infra.sh -O ${globals.vap_dir}/infra.sh;
+      wget ${globals.baseUrl}/installer/user.sh -O ${globals.vap_dir}/user.sh;
+      wget ${globals.baseUrl}/installer/vap.sh -O ${globals.vap_dir}/vap.sh;
 
   installOSclient: 
     - cmd[cp]: |- 
