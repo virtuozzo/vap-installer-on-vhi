@@ -475,6 +475,19 @@ configure(){
       };
     }
   done
+ 
+  if [ -n "${NEW_SSH_KEY_NAME}" ]; then
+    execAction "${OPENSTACK} keypair list"
+      for keypair in $(source ${VAP_ENVS};  ${OPENSTACK} keypair list -f value -c 'Name'); do
+        [[ "x$keypair" == "x$NEW_SSH_KEY_NAME" ]] && {
+          [[ "x${FORMAT}" == "xjson" ]] && {
+          execResponse "${VALIDATION_ERROR_CODE}" "Keypair name $NEW_SSH_KEY_NAME is already taken"; exit 0;
+        } || {
+          echo "Keypair name $NEW_SSH_KEY_NAME is already taken"; exit 0;
+        };
+      }
+    done
+  fi
 
   getFlavors
   getInfraFlavors
