@@ -31,7 +31,7 @@ function getJsonFromFile(jsonFile) {
 }
 
 function getSSHKeysList() {
-    var cmd = "source .vapenv; /opt/jelastic-python311/bin/openstack keypair list -f json"
+    var cmd = "[ -f /var/www/webroot/.vapenv ] && { source /var/www/webroot/.vapenv; /opt/jelastic-python311/bin/openstack keypair list -f json; } || echo '{}'"
     var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
         "command": cmd
     }]), true);
