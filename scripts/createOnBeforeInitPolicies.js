@@ -1,43 +1,56 @@
-var baseUrl = '${baseUrl}'.replace('scripts/', '');
-var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
-    "command": "bash /var/www/webroot/reconfigure.sh"
+var showMarkup = false; markup = "Reconfiguration with valid credentials is required. Cannot get such parameters: ", baseUrl = '${baseUrl}'.replace('scripts/', '');
+var resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
+    "command": "wget " + baseUrl + "/installer/reconfigure.sh -O /var/www/webroot/reconfigure.sh; bash /var/www/webroot/reconfigure.sh"
 }]), true);
 if (resp.result != 0) return resp;
 var infraFlavorList = getJsonFromFile("infraFlavors.json");
+if (infraFlavorList == "{}") { showMarkup = true; markup += "RAM&CPU infra flavors, "; }
 var infraFlavorListPrepared = prepareFlavorsList(JSON.parse(infraFlavorList));
 var storagePoliciesList = getJsonFromFile("storagePolicies.json");
+if (storagePoliciesList == "{}") { showMarkup = true; markup += "storage policies, "; }
 var storagePoliciesListPrepared = prepareStoragePoliciesList(JSON.parse(storagePoliciesList));
 var userFlavorList = getJsonFromFile("userFlavors.json");
+if (userFlavorList == "{}") { showMarkup = true; markup += "RAM&CPU user flavors, "; }
 var userFlavorListPrepared = prepareFlavorsList(JSON.parse(userFlavorList));
 var imagesList = getJsonFromFile("images.json");
+if (imagesList == "{}") { showMarkup = true; markup += "VAP image names, "; }
 var imageListPrepared = prepareImageList(JSON.parse(imagesList));
 var subnetsList = getJsonFromFile("subnets.json");
+if (subnetsList == "{}") { showMarkup = true; markup += "VHI public subnets, "; }
 var subnetListPrepared = prepareSubnetList(JSON.parse(subnetsList));
 var sshKeys = getSSHKeysList();
 var sshKeysPrepared = prepareSSHKeysList(JSON.parse(sshKeys));
-var vapStackName = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
+resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
     command: '[ -f /var/www/webroot/.vapenv ] && source /var/www/webroot/.vapenv; echo $VAP_STACK_NAME'
-}]), true).responses[0].out;
-var currentSSHKey = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
+}]), true);
+if (resp.result != 0) return resp;
+var vapStackName = resp.responses[0].out;
+if (vapStackName == "") { showMarkup = true; markup += "VAP project name, "; }
+resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
     command: '[ -f /var/www/webroot/.vapenv ] && source /var/www/webroot/.vapenv; echo $VAP_SSH_KEY_NAME'
-}]), true).responses[0].out;
+}]), true);
+if (resp.result != 0) return resp;
+var currentSSHKey = resp.responses[0].out;
 
 function getJsonFromFile(jsonFile) {
     var cmd = "cat /var/www/webroot/" + jsonFile;
-    var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
+    var resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
         "command": cmd
     }]), true);
-    if (resp.result != 0) return resp;
+    if (resp.result != 0) throw resp;
     return resp.responses[0].out;
 }
 
 function getSSHKeysList() {
-    var cmd = "[ -f /var/www/webroot/.vapenv ] && { source /var/www/webroot/.vapenv; /opt/jelastic-python311/bin/openstack keypair list -f json; } || echo '{}'"
-    var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
+    var cmd = "source /var/www/webroot/.vapenv; /opt/jelastic-python311/bin/openstack keypair list -f json"
+    var resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
         "command": cmd
     }]), true);
-    if (resp.result != 0) return resp;
-    return resp.responses[0].out;
+    if (resp.result != 0) {
+        showMarkup = true; markup += "SSH key names, "; return "{}";
+    } else {
+        return resp.responses[0].out;
+    }
 }
 
 function prepareSSHKeysList(values) {
@@ -102,7 +115,7 @@ function prepareImageList(values) {
 
 var settings = jps.settings.create;
 var fields = {};
-for (var i = 0, field; field = jps.settings.create.fields[i]; i++)
+for (let field of jps.settings.create.fields)
   fields[field.name] = field;
 var instTypeFields = fields["inst_type"].showIf;
 instTypeFields.poc[1].values = infraFlavorListPrepared;
@@ -182,5 +195,13 @@ settings.fields.push(
      },
   }
 );
+
+if (showMarkup) {
+    markup = markup.toString().slice(0, -2);
+    api.marketplace.console.WriteLog(markup);
+    settings.fields.push(
+        {"type": "displayfield", "cls": "warning", "height": 50, "hideLabel": true, "markup": markup + "."}
+    )
+}
 
 return settings;
