@@ -161,7 +161,7 @@ resources:
       gateway_ip: null
       allocation_pools:
         - start: 192.168.128.1
-          end: 192.168.254.254
+          end: 192.168.254.250
 
   port_public_infra1:
     type: OS::Neutron::Port
