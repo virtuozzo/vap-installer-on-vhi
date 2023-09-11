@@ -30,7 +30,7 @@ resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master
 }]), true);
 if (resp.result != 0) return resp;
 if (resp.responses[0].out != "Stack not found") {
-    var markup2 = "Stack name "  + vapStackName + " is already taken.";
+    var markup2 = "VAP Project Name "  + vapStackName + " is already taken. Please choose another one.";
 }
 if (vapStackName == "") { showMarkup = true; markup += "VAP project name, "; }
 resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
