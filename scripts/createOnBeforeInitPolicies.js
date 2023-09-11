@@ -1,4 +1,4 @@
-var showMarkup = false; markup = "Reconfiguration with valid credentials is required. Cannot get such parameters: ", baseUrl = '${baseUrl}'.replace('scripts/', '');
+var showMarkup = false, markup = "Reconfiguration with valid credentials is required. Cannot get such parameters: ", baseUrl = '${baseUrl}'.replace('scripts/', '');
 var resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
     "command": "wget " + baseUrl + "/installer/reconfigure.sh -O /var/www/webroot/reconfigure.sh; bash /var/www/webroot/reconfigure.sh"
 }]), true);
@@ -25,6 +25,13 @@ resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master
 }]), true);
 if (resp.result != 0) return resp;
 var vapStackName = resp.responses[0].out;
+resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
+    command: '[ -f /var/www/webroot/.vapenv ] && source /var/www/webroot/.vapenv; openstack stack check $VAP_STACK_NAME || echo "Stack not found"'
+}]), true);
+if (resp.result != 0) return resp;
+if (resp.responses[0].out != "Stack not found") {
+    var markup2 = "Stack name "  + vapStackName + " is already taken.";
+}
 if (vapStackName == "") { showMarkup = true; markup += "VAP project name, "; }
 resp = api.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{
     command: '[ -f /var/www/webroot/.vapenv ] && source /var/www/webroot/.vapenv; echo $VAP_SSH_KEY_NAME'
@@ -201,6 +208,13 @@ if (showMarkup) {
     api.marketplace.console.WriteLog(markup);
     settings.fields.push(
         {"type": "displayfield", "cls": "warning", "height": 50, "hideLabel": true, "markup": markup + "."}
+    )
+}
+
+if (markup2) {
+    api.marketplace.console.WriteLog(markup2);
+    settings.fields.push(
+        {"type": "displayfield", "cls": "warning", "height": 50, "hideLabel": true, "markup": markup2 }
     )
 }
 
