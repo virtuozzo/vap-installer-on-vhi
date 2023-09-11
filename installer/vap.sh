@@ -366,7 +366,10 @@ responseValidate(){
   local errorsArray="HTTP 401:Your credentials are incorrect or have expired,"
   errorsArray+="HTTP 404:API version is incorrect,"
   errorsArray+="Name or service not known:API endpoint URL is invalid"
-
+  errorsArray+="could not be found. (HTTP 400)"
+  errorsArray+="ConflictException: 409: Client Error"
+  errorsArray+="is not created because it already exists."
+  
   while read -d, -r pair; do
     IFS=':' read -r key val <<<"$pair"
     grep -q "$key" <<< "$response" && {
