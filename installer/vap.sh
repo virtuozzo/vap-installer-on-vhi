@@ -368,7 +368,7 @@ responseValidate(){
   errorsArray+="Name or service not known:API endpoint URL is invalid"
   errorsArray+="could not be found. (HTTP 400)"
   errorsArray+="ConflictException: 409: Client Error"
-  errorsArray+="is not created because it already exists."
+  errorsArray+="is not created because stack with the same name already exists."
   
   while read -d, -r pair; do
     IFS=':' read -r key val <<<"$pair"
@@ -470,6 +470,7 @@ configure(){
   for stack in $(source ${VAP_ENVS};  ${OPENSTACK} stack list -f value -c 'Stack Name'); do
     [[ "x$stack" == "x$VAP_STACK_NAME" ]] && {
       [[ "x${FORMAT}" == "xjson" ]] && {
+        log "Project name $VAP_STACK_NAME is already taken";
         execResponse "${VALIDATION_ERROR_CODE}" "Project name $VAP_STACK_NAME is already taken"; exit 0;
       } || {
         echo "Project name $VAP_STACK_NAME is already taken"; exit 0;
@@ -638,6 +639,16 @@ create(){
   INFRA_STORAGE_POLICY=$(_getValueById $INFRA_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
   USER_STORAGE_POLICY=$(_getValueById $USER_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
   VAP_PLATFORM_DATA_STORAGE_POLICY=$(_getValueById $VAP_PLATFORM_DATA_STORAGE_POLICY "ID" ${VOLUME_TYPES_JSON})
+
+  for stack in $(source ${VAP_ENVS};  ${OPENSTACK} stack list -f value -c 'Stack Name'); do
+    [[ "x$stack" == "x$VAP_STACK_NAME" ]] && {
+      [[ "x${FORMAT}" == "xjson" ]] && {
+        execResponse "${VALIDATION_ERROR_CODE}" "Stack ${VAP_STACK_NAME} is not created because stack with the same name already exists. See ${RUN_LOG} for details."; exit 0;
+      } || {
+        echo "Stack ${VAP_STACK_NAME} is not created because stack with the same name already exists."; exit 0;
+      };
+    }
+  done
 
   local createcmd="${OPENSTACK} stack create ${VAP_STACK_NAME} -t VAP.yaml"
   createcmd+=" --parameter image=${IMAGE}"
