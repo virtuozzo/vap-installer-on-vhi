@@ -7,6 +7,7 @@ description: Get your PaaS installed in a minutes on top of any publicly accessi
 
 nodes:
   - nodeType: apache-python
+    engine: python3.11
     cloudlets: 16
 
 onInstall:
