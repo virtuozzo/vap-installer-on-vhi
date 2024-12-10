@@ -78,6 +78,7 @@ make_swap(){
 make_vz(){
     local part="/dev/${1}"
     local dev="${part%%[0-9]}"
+    local part_number="${part: -1:1}"
     local mountpoint=$2
     
     log "Make $mountpoint"
@@ -104,7 +105,7 @@ make_vz(){
             done
             
             rm -rf /vz/*
-            growpart $dev 1
+            growpart $dev $part_number
             e2fsck -yf $part
             resize2fs $part
             local UUID=$(uuidgen)
@@ -128,8 +129,12 @@ make_vz(){
 
 configure_disks(){
     set -x
-    local parts=( $(sudo lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -o sd. | uniq -u) )
-    parts=( ${parts[@]} $(lsblk -l -o NAME,MOUNTPOINT  | grep '^sd.[0-1]' | awk '{ if(!$2) print $1}') )
+    local parts=( $(sudo lsblk -o NAME,HCTL,SIZE,MOUNTPOINT | grep -Eo "(v|s)d." | uniq -u) )
+    local parts2=( $(lsblk -l -o NAME,MOUNTPOINT  | grep -E '^(s|v)d.[0-2]' | awk '{ if(!$2) print $1}') )
+    for part in ${parts2[@]}; do
+        flag=$(parted /dev/${part%?} --script print | awk "{ if (\$1 == \"${part: -1:1}\") print \$NF}")
+        [[ "$flag" == "bios_grub" ]] || parts=( ${parts[@]} $part )
+    done
     IFS=$'\n' parts=($(sort <<<"${parts[*]}"))
     unset IFS
     
