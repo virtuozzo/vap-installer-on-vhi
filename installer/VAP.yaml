@@ -17,7 +17,7 @@ parameters:
     type: string
     label: Image Name
     description: Name of the image to be used for the compute instance
-    default: vap-8-4-3
+    default: vap-8-10-2
 
   infra_flavor:
     type: string
