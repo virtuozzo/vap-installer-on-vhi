@@ -28,6 +28,23 @@ wait_resolvers(){
     return 255
 }
 
+populate_hosts(){
+    #Disable DNS lookup for SSH if dns is not working
+    if ! host virtuozzo.com && ! host google.com; then
+        if ! grep -q "^UseDNS no" /etc/ssh/sshd_config; then
+            if grep -q "^UseDNS" /etc/ssh/sshd_config; then
+                sed -i 's/^UseDNS.*/UseDNS no/' /etc/ssh/sshd_config
+            else
+                echo "UseDNS no" >> /etc/ssh/sshd_config
+            fi
+            sshd -t && systemctl restart sshd
+        fi
+        for tmp in app jca reg res etpl ext cmp wp cs; do
+            sed -ri "/^([0-9]{1,3}[.]){3}[0-9]{1,3}[[:blank:]]*$tmp[.]/d" /etc/hosts
+            echo "$RESOLVER_IP ${tmp}.${domain}" >> /etc/hosts
+        done
+    fi
+}
 
 get_cmd(){
     log "Get hot add command"
@@ -177,6 +194,7 @@ main(){
 
     configure_disks || return 255;
     wait_resolvers || return $?
+    populate_hosts || return $?
     get_cmd || return $?
     get_licens_info || return $?
 

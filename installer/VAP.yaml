@@ -121,6 +121,18 @@ parameters:
         description: must be between 1 and 32 Gb.
     default: 8
   
+  proxy:
+    type: string
+    label: Proxy URL
+    description: HTTP/HTTPS proxy URL (optional)
+    default: ''
+
+  nameserver:
+    type: string
+    label: Nameserver IP
+    description: IP address of the DNS server to use
+    default: ''
+
 resources:
 
   node_name_prefix:
@@ -257,6 +269,8 @@ resources:
             $resolver1_ip: { get_attr: [port_public_infra1, fixed_ips, 1, ip_address] }
             $resolver2_ip: { get_attr: [port_public_infra2, fixed_ips, 1, ip_address] }
             $infra2_internal_ip: { get_attr: [port_private_infra2, fixed_ips, 0, ip_address] }
+            $proxy: { get_param: proxy }
+            $nameserver : { get_param: nameserver }
 
 
 
