@@ -2,12 +2,12 @@
 
 version=$(cat /etc/jelastic/infra_version)
 
-if [[ ! -z $proxy ]]; then
+if [[ ! -z "$proxy" ]]; then
     param_proxy="--proxy $proxy"
     param_le="--lets_encrypt NO"
 fi
 
-if [[ ! -z $nameserver ]]; then
+if [[ ! -z "$nameserver" ]]; then
     param_ns="--nameserver $nameserver"
 fi
 

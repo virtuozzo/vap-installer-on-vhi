@@ -56,7 +56,7 @@ openstack stack list
 
 #### Optional Parameters:
 - `user_hosts_count`: Number of user nodes (default: 3, range: 0-100)
-- `image`: Base image name (default: vap-8-11-2)
+- `image`: Base image name (default: vap-8-12-1)
 - `public_network`: Public network name (default: public)
 - `proxy`: HTTP/HTTPS proxy URL
 - `nameserver`: Custom DNS server IP
