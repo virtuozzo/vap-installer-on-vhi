@@ -1,21 +1,21 @@
 # VAP Cluster Deployment with OpenStack Heat
 
-This repository contains Heat templates for deploying a VAP (Virtuozzo Application Platform) cluster on OpenStack.
+Heat is the orchestration service in OpenStack, which allows users to create and manage cloud resources using templates. This repository contains Heat templates for the automated deployment of a VAP (Virtuozzo Application Platform) cluster.
 
-Read [Installation Prerequisites](https://github.com/virtuozzo/vap-installer-on-vhi/tree/master?tab=readme-ov-file#installation-prerequisites) before deploying.
+> Read [Installation Prerequisites](https://github.com/virtuozzo/vap-installer-on-vhi/tree/master?tab=readme-ov-file#installation-prerequisites) before deploying.
 
-## Openstack Heat Prerequisites
 
-### 1. Heat Client Installation
+## Deployment Prerequisites
 
-Install the OpenStack CLI and Heat client:
+1\. The ***openstackclient*** and ***heatclient*** software modules are required and should be pre-installed to work with the Heat templates.
+
+If you haven't before, install the OpenStack CLI and Heat client:
+
 ```bash
 pip install python-openstackclient python-heatclient
 ```
 
-### 2. Project Configuration
-
-Create a `project.sh` file with your OpenStack credentials and source it before running the deployment:
+2\. Create the `project.sh` OpenStack source file with VAP project configurations. Use the following example as a template:
 
 ```bash
 #!/bin/bash
@@ -34,57 +34,55 @@ export CINDERCLIENT_INSECURE=true
 export OS_PLACEMENT_API_VERSION=1.22
 ```
 
-Source the file:
+3\. Source the project file and verify configuration (no errors should be reported) before running the deployment:
+
 ```bash
 source project.sh
-```
-
-Check the project configuration (no errors should be reported):
-```bash
 openstack stack list
 ```
 
+
 ## Template Parameters
 
-### VAP.yaml Parameters
+The `VAP.yaml` OpenStack Heat template is used to deploy a VAP cluster. It uses a set of parameters that should be provided during the deployment:
 
-#### Required Parameters:
-- `infra_flavor`: Flavor name for infrastructure nodes. 
-- `user_flavor`: Flavor name for user nodes
-- `public_subnet`: Public subnet name or ID
-- `key_name`: SSH key name for VM access
+- **Required Parameters**
+  - `infra_flavor`: Flavor name for infrastructure nodes
+  - `user_flavor`: Flavor name for user nodes
+  - `public_subnet`: Public subnet name or ID
+  - `key_name`: SSH key name for VM access
+- **Optional Parameters**
+  - `user_hosts_count`: Number of user nodes (default: 3; range: 0-100)
+  - `image`: Base image name (default: vap-8-12-1)
+  - `public_network`: Public network name (default: public)
+  - `proxy`: HTTP/HTTPS proxy URL
+  - `nameserver`: Custom DNS server IP
+- **Storage Parameters**
+  - `storage_policy_root`: Storage policy for root volumes (default: default)
+  - `storage_policy_infra_vz`: Storage policy for infra /vz volumes (default: default)
+  - `storage_policy_user_vz`: Storage policy for user /vz volumes (default: default)
+  - `storage_policy_vap_platform_data`: Storage policy for platform data (default: default)
+- **Volume Size Parameters**
+  - `infra_root_volume_size`: Root volume size for infra nodes (100-2000 GB)
+  - `user_root_volume_size`: Root volume size for user nodes (100-2000 GB)
+  - `infra_vz_volume_size`: /vz volume size for infra nodes (100-5000 GB)
+  - `user_vz_volume_size`: /vz volume size for user nodes (100-10000 GB)
+  - `vap_platform_data_volume_size`: Volume size for uploader and docker cache (100-2500 GB)
+  - `infra_swap_volume_size`: Swap size for infra nodes (1-32 GB)
+  - `user_swap_volume_size`: Swap size for user nodes (1-32 GB)
 
-#### Optional Parameters:
-- `user_hosts_count`: Number of user nodes (default: 3, range: 0-100)
-- `image`: Base image name (default: vap-8-12-1)
-- `public_network`: Public network name (default: public)
-- `proxy`: HTTP/HTTPS proxy URL
-- `nameserver`: Custom DNS server IP
+These parameters can be specified in a separate file (e.g., `params.yaml`) or passed as command line arguments.
 
-#### Storage Parameters:
-- `storage_policy_root`: Storage policy for root volumes (default: default)
-- `storage_policy_infra_vz`: Storage policy for infra /vz volumes (default: default)
-- `storage_policy_user_vz`: Storage policy for user /vz volumes (default: default)
-- `storage_policy_vap_platform_data`: Storage policy for platform data (default: default)
-
-#### Volume Sizes:
-- `infra_root_volume_size`: Root volume size for infra nodes (100-2000 GB)
-- `user_root_volume_size`: Root volume size for user nodes (100-2000 GB)
-- `infra_vz_volume_size`: /vz volume size for infra nodes (100-5000 GB)
-- `user_vz_volume_size`: /vz volume size for user nodes (100-10000 GB)
-- `vap_platform_data_volume_size`: Volume size for uploader and docker cache (100-2500 GB)
-- `infra_swap_volume_size`: Swap size for infra nodes (1-32 GB)
-- `user_swap_volume_size`: Swap size for user nodes (1-32 GB)
 
 ## Deployment Examples
 
-### Basic Deployment
+For basic deployment, only the required parameters are needed. For example, to deploy a VAP cluster with 4 user nodes:
 
 ```bash
 openstack stack create -t VAP.yaml -e params.yaml my-vap-cluster
 ```
 
-Example `params.yaml`:
+`params.yaml`:
 ```yaml
 parameters:
   infra_flavor: "m1.xlarge"
@@ -94,25 +92,25 @@ parameters:
   key_name: "my-ssh-key"
 ```
 
-### Basic Deployment with command line parameters:
+> Alternatively, parameters can be specified directly in the command line:
+> 
+> ```bash
+> openstack stack create -t VAP.yaml \
+>     --parameter infra_flavor=m1.xlarge \
+>     --parameter user_flavor=m1.large \
+>     --parameter public_subnet=public-subnet-1 \
+>     --parameter user_hosts_count=4 \
+>     --parameter key_name=my-ssh-key \
+> my-vap-cluster
+> ```
 
-```bash
-openstack stack create -t VAP.yaml \
-    --parameter infra_flavor=m1.xlarge \
-    --parameter user_flavor=m1.large \
-    --parameter public_subnet=public-subnet-1 \
-    --parameter user_hosts_count=4 \
-    --parameter key_name=my-ssh-key \
-my-vap-cluster
-```
-
-### Advanced Deployment with Custom Storage
+For advanced deployment, additional parameters can be specified. For example, to customize the storage:
 
 ```bash
 openstack stack create -t VAP.yaml -e advanced-params.yaml my-vap-cluster
 ```
 
-Example `advanced-params.yaml`:
+`advanced-params.yaml`:
 ```yaml
 parameters:
   infra_flavor: "m1.xlarge"
@@ -130,46 +128,52 @@ parameters:
   proxy: "http://proxy.example.com:3128"
   nameserver: "172.16.1.1"
 ```
-### Advanced Deployment with command line parameters:
 
-```bash
-openstack stack create -t VAP.yaml \
-    --parameter infra_flavor=m1.xlarge \
-    --parameter user_flavor=m1.large \
-    --parameter public_subnet=public-subnet-1 \
-    --parameter user_hosts_count=4 \
-    --parameter key_name=my-ssh-key \
-    --parameter storage_policy_root=ssd-tier \
-    --parameter storage_policy_infra_vz=high-iops \
-    --parameter storage_policy_user_vz=standard \
-    --parameter infra_root_volume_size=200 \
-    --parameter user_root_volume_size=150 \
-    --parameter infra_vz_volume_size=1000 \
-    --parameter user_vz_volume_size=500 \
-    --parameter proxy=http://proxy.example.com:3128 \
-    --parameter nameserver=172.16.1.1 \
-my-vap-cluster
-```
+> Alternatively, parameters can be specified directly in the command line:
+> 
+> ```bash
+> openstack stack create -t VAP.yaml \
+>     --parameter infra_flavor=m1.xlarge \
+>     --parameter user_flavor=m1.large \
+>     --parameter public_subnet=public-subnet-1 \
+>     --parameter user_hosts_count=4 \
+>     --parameter key_name=my-ssh-key \
+>     --parameter storage_policy_root=ssd-tier \
+>     --parameter storage_policy_infra_vz=high-iops \
+>     --parameter storage_policy_user_vz=standard \
+>     --parameter infra_root_volume_size=200 \
+>     --parameter user_root_volume_size=150 \
+>     --parameter infra_vz_volume_size=1000 \
+>     --parameter user_vz_volume_size=500 \
+>     --parameter proxy=http://proxy.example.com:3128 \
+>     --parameter nameserver=172.16.1.1 \
+> my-vap-cluster
+> ```
+
 
 ## Monitoring Deployment
 
-Check the stack status:
+You can monitor the deployment status by listing all stacks and view detailed information about the created stack:
+
 ```bash
 openstack stack list
 openstack stack show my-vap-cluster
 ```
 
-View stack events:
+For debugging, you can check the events list (actions and changes that have occurred during the lifecycle of the stack):
+
 ```bash
 openstack stack event list my-vap-cluster
 ```
 
-## Next Steps
+## Post-Deployment Actions
 
-Show variables:
+Once the deployment is complete, you can access the webinstaller to continue the installation. Use the following command to show stack variables and get the installer link:
+
 ```bash
 openstack stack output show my-vap-cluster
 ```
+
 Example of output:
 ```
 +-------------------+--------------------------------------------------------------------+
@@ -186,15 +190,15 @@ Example of output:
 |                   |   "output_value": "https://user:password@172.16.1.100:8081"        |
 |                   | }                                                                  |
 +-------------------+--------------------------------------------------------------------+
-
 ```
 
-Use "webinstaller_link" to access the installer and [continue the installation](https://github.com/virtuozzo/vap-installer-on-vhi/tree/master?tab=readme-ov-file#paas-web-installer).
+Open "***webinstaller_link***" to [continue the installation](https://github.com/virtuozzo/vap-installer-on-vhi/tree/master?tab=readme-ov-file#paas-web-installer).
 
 
 ## Cleanup
 
-To delete the stack and all associated resources:
+To delete the stack and all associated resources, use the following command:
+
 ```bash
 openstack stack delete my-vap-cluster
 ```

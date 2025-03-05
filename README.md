@@ -5,14 +5,14 @@ This project helps you create PaaS (Virtuozzo Application Platform or VAP) on to
 - **[Prerequisites](#installation-prerequisites)** – ensure that you meet all the installation requirements
 - **[Prepare Infrastructure](#infrastructure-configuration)** – configure your VHI/VHC cluster via UI or CLI
 - **[PaaS Web Installer](#paas-web-installer)** – run the automatic PaaS installer
-- **[Removing VAP Stack](#remove-vap-stack)** – delete unnecessary VAP stacks
+- **[Remove VAP Stack](#remove-vap-stack)** – delete unnecessary VAP stacks
 
 
 ## Installation Prerequisites
 
 Before starting the installation, make the following preparations:
 
-1\. Get **VHI/VHC cluster** account and obtain a **Virtuozzo Application Platform license**. ([send a request](https://forms.office.com/e/4F667yc4j3)).
+1\. Get **VHI/VHC cluster** account and obtain a **Virtuozzo Application Platform license** ([send a request](https://forms.office.com/e/4F667yc4j3)).
 
 2\. Upload the latest **VAP qcow2 template** to your cluster via admin UI or CLI. We recommend the latter option as it is faster:
 
@@ -26,7 +26,7 @@ wget https://vap-images.virtuozzo.dev/vap-images/latest/vap-8-12-1.qcow2
 vinfra service compute image create vap-8-12-1 --disk-format qcow2 --container-format bare --file vap-8-12-1.qcow2 --public --wait
 ```
 
-3\. Check [PaaS requirements](https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/) and, if needed, [create flavors](https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_5_4_admins_guide/index.html#creating-custom-flavors.html) with sufficient resources in your VHI cluster.
+3\. Check [PaaS requirements](https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/) and, if needed, [create flavors](https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_6_3_admins_guide/index.html#creating-custom-flavors.html) with sufficient resources in your VHI cluster.
 
 4\. Ensure the cluster has a **publicly accessible** physical network:
 
@@ -38,13 +38,16 @@ vinfra service compute image create vap-8-12-1 --disk-format qcow2 --container-f
 
 > **Tip:** You can close access to these ports after successful installation.
 
+
 ## Infrastructure Configuration
 
 We’ve prepared **GUI** and **CLI** installation scenarios for automatic VHI cluster configuration. The GUI flow just provides the visual interface to help perform installation and configuration without manual commands. Otherwise, both flows are similar and utilize the same set of the commands. Deployment does not require in-depth knowledge of the Virtuozzo Application Platform or [VHI Openstack](https://github.com/virtuozzo/vhideploy).
 
+> In some complex custom cases, you may prefer to use the OpenStack Heat template for the VAP installation. Check the detailed [VAP Cluster Deployment with OpenStack Heat](https://github.com/virtuozzo/vap-installer-on-vhi/tree/8.12-1/installer) guide.
+
 ### GUI Installation
 
-1\. Log in or register at any [Virtuozzo Application Platform](https://www.virtuozzo.com/application-platform-partners/). Click the Import button at the top of the dashboard.
+1\. Log in or register at any [Virtuozzo Application Platform](https://www.virtuozzo.com/application-platform-partners/). Click the **Import** button at the top of the dashboard.
 
 ![VAP import](images/01-vap-import.png)
 
@@ -118,7 +121,7 @@ Follow the URL to access the PaaS web installer.
 
 The CLI version of the guide may be needed in some specific cases. For example, if the public access for the API endpoint of the cluster is not configured. In such a case the commands can be executed manually from the VHI cluster controller node.
 
-> **Note:** The ***openstackclient*** and ***heatclient*** software are required to work with the installer. Both should be pre-installed on VHI cluster. Otherwise, use the `pip install python-openstackclient` and `pip install python-heatclient` commands.
+> **Note:** The ***openstackclient*** and ***heatclient*** software modules are required to work with the installer. Both should be pre-installed on VHI cluster. Otherwise, use the `pip install python-openstackclient` and `pip install python-heatclient` commands.
 
 1\. Clone the installer repository from GitHub.
 
@@ -128,7 +131,7 @@ git clone https://github.com/virtuozzo/vap-installer-on-vhi
 
 ![git colone VAP installer repo](images/09-git-colone-vap-installer-repo.png)
 
-2\. Go to the **~/vap-installer-on-vhi/installer/** directory and run the `vap.sh` script for information on the script usage and parameters.
+2\. Go to the **~/vap-installer-on-vhi/installer/** directory. You can run the `vap.sh` script without any parameters to get the help message with information on the script usage and parameters.
 
 ```
 cd vap-installer-on-vhi/installer/
@@ -189,15 +192,15 @@ Open the URL and complete the installation via web installer.
 
 ## PaaS Web Installer
 
-Web installer for Virtuozzo Application Platform automates all the operations required to get the PaaS. You just need to provide the following data before the star:
+Web installer for Virtuozzo Application Platform automates all the operations required to get the PaaS. You just need to provide the following data before the start:
 
 - ***System User Email*** – specify the email for the platform admin user
-- ***License Key*** – provide a license key for the business edition of the PaaS (obtained from the Support Team) via the [form](https://forms.office.com/e/4F667yc4j3))
+- ***License Key*** – provide a license key for the business edition of the PaaS (obtained from the Support Team via the [form](https://forms.office.com/e/4F667yc4j3))
 - ***Platform Entry Point IP*** – automatically obtained from the previously provided data (not editable)
 - ***Domain*** – specify the preferred domain name for the platform; use the **Custom Domain** toggle to:
   - *disabled* – provide a third-level domain name for the default DNS zone with an automatic delegation
   - *enabled* – specify your custom domain (requires [manual delegation](https://www.virtuozzo.com/application-platform-ops-docs/dns-zones-delegation/) to the platform entry point IP, it will be verified before starting the installation)
-- ***Install Monitoring*** – enable if you want to configure default integration with the Zabbix monitoring system (disable to configure monitoring manually)
+- ***Install Monitoring*** – enable if you want to configure default integration with the Prometheus monitoring system (disable to configure monitoring manually)
 
 ![VAP web installer](images/14-vap-web-installer.png)
 
@@ -214,7 +217,7 @@ That’s all! The platform is ready for [post-installation configurations](https
 
 ## Remove VAP Stack
 
-If you decide to remove your VAP project from the VHI cluster, you can use the [OpenStack CLI](https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_5_4_admins_guide/index.html#connecting-to-openstack-command-line-interface.html?Highlight=openstack) functionality.
+If you decide to remove your VAP project from the VHI cluster, you can use the [OpenStack CLI](https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_6_3_admins_guide/index.html#connecting-to-openstack-command-line-interface.html?Highlight=openstack) functionality.
 
 1\. Create or edit the OpenStack source file based on the provided example:
 
