@@ -15,6 +15,18 @@ cp /var/lib/jelastic/get_jelastic_containers.sh /tmp/
 
 cd /root
 curl ${param_proxy} https://dot.jelastic.com/download/selfinstall/installer/jelastic_installer-${version}.sh > /root/jelastic_installer.sh;
+vap_install_link_file=/root/vap_install_link
+[[ -s /root/jelastic_installer.sh ]] && \
+    bash -n /root/jelastic_installer.sh && \
+    sed -i "/${vap_install_link_file##*/}/d" /root/.bashrc || {
+        echo > $vap_install_link_file
+        sed -i "/${vap_install_link_file##*/}/d" /root/.bashrc
+        message="\\033[1;31m\033[1mLooks like the installation script can't be downloaded or is broken.\\033[0m\\033[0;39m"
+        echo -e "$message" | tee -a $vap_install_link_file
+        echo | tee -a $vap_install_link_file
+        echo "cat $vap_install_link_file" >> /root/.bashrc
+}
+
 bash /root/jelastic_installer.sh \
 --webinstaller_password $webinstaller_password \
 --network 192.168.128.0/17 \
