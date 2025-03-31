@@ -39,6 +39,8 @@ populate_hosts(){
             fi
             sshd -t && systemctl restart sshd
         fi
+    fi
+    if ! host app.${domain}; then
         for tmp in app jca reg res etpl ext cmp wp cs; do
             sed -ri "/^([0-9]{1,3}[.]){3}[0-9]{1,3}[[:blank:]]*$tmp[.]/d" /etc/hosts
             echo "$RESOLVER_IP ${tmp}.${domain}" >> /etc/hosts
