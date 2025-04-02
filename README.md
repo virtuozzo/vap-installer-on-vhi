@@ -119,9 +119,28 @@ Follow the URL to access the PaaS web installer.
 
 ### CLI Installation
 
-The CLI version of the guide may be needed in some specific cases. For example, if the public access for the API endpoint of the cluster is not configured. In such a case the commands can be executed manually from the VHI cluster controller node.
+The CLI version of the guide may be needed in some specific cases. For example, if the public access for the API endpoint of the cluster is not configured. In such a case, the commands can be executed manually.
 
-> **Note:** The ***openstackclient*** and ***heatclient*** software modules are required to work with the installer. Both should be pre-installed on VHI cluster. Otherwise, use the `pip install python-openstackclient` and `pip install python-heatclient` commands.
+> **Note:** Before running the commands, ensure that:
+> - You have access to the VHI API.
+> - The ***openstackclient*** and ***heatclient*** software modules are pre-installed (use the `pip install python-openstackclient` and `pip install python-heatclient` commands).
+> - The OpenStack data source file is present. You can create it based on the example below:
+> ```bash
+> #!/bin/bash
+> export OS_PROJECT_DOMAIN_NAME=<domain_for_your_project>
+> export OS_USER_DOMAIN_NAME=<domain_for_your_user>
+> export OS_PROJECT_NAME=<your_target_project>
+> export OS_USERNAME="user@virtuozzo.com"
+> export OS_PASSWORD="Password"
+> export OS_AUTH_URL=https://<domain_name_or_ip>:5000/v3
+> export OS_IDENTITY_API_VERSION=3
+> export OS_AUTH_TYPE=password
+> export OS_INSECURE=true
+> export NOVACLIENT_INSECURE=true
+> export NEUTRONCLIENT_INSECURE=true
+> export CINDERCLIENT_INSECURE=true
+> export OS_PLACEMENT_API_VERSION=1.22
+> ```
 
 1\. Clone the installer repository from GitHub.
 
@@ -176,9 +195,10 @@ sh vap.sh configure --project-domain={domain} --user-domain={domain} --project={
 - ***infra-swap-size*** – Infra node swap size (GB)
 - ***user-swap-size*** – User node swap size (GB)
 - ***key-name*** - public SSH key from the VHI cluster
+- ***vap-platform-data-size*** - size of the platform data volume (GB)
 
 ```
-sh vap.sh create --infra-flavor={ID} --user-flavor={ID} --subnet={ID} --image={ID} --user-host-count={number} --infra-root-size={GB} --infra-vz-size={GB} --user-root-size={GB} --user-vz-size={GB} --infra-swap-size={GB} --user-swap-size={GB} --key-name={SSH key name}
+sh vap.sh create --infra-flavor={ID} --user-flavor={ID} --subnet={ID} --image={ID} --user-host-count={number} --infra-root-size={GB} --infra-vz-size={GB} --user-root-size={GB} --user-vz-size={GB} --infra-swap-size={GB} --user-swap-size={GB} --key-name={SSH key name} --vap-platform-data-size={GB}
 ```
 
 ![vap.sh create](images/12-vap-sh-create.png)
