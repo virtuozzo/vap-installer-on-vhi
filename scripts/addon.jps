@@ -442,6 +442,7 @@ actions:
     - cmd[cp]: |- 
         pip install python-openstackclient
         pip install python-heatclient
+        pip install gnureadline
 
   create:
     - getScripts
