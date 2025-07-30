@@ -32,10 +32,17 @@ settings:
 
 onInstall:
   - script: return {result:0, envGroups:eval('(' + MANIFEST + ')').envGroups}
+  - set: { region: '${settings.region:}' }
+  - if (!'${this.region:}'): 
+    - env.control.GetRegions
+    - forEach(response.array):
+        forEach(hardNodeGroup:response.array[${@}].hardNodeGroups):
+          if ('${@hardNodeGroup.engine}' == 'PAAS' && !'${this.region:}'):
+            set: { region: '${@hardNodeGroup.uniqueName}' }
   - install:
       jps: scripts/topology.jps?_r=${fn.random}
       envName: ${settings.envName}
-      region: ${settings.region}
+      region: ${this.region}
       loggerName: ${settings.envName}
       displayName: ${settings.displayName}
       envGroups: ${response.envGroups}
