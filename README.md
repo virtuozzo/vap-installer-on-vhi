@@ -19,11 +19,11 @@ Before starting the installation, make the following preparations:
 - Login to your physical VHI cluster primary node via SSH.
 - Download the latest *VAP qcow2* template from the [repository](https://vap-images.virtuozzo.dev/vap-images/latest/). For example, with the following command:
 ```
-wget https://vap-images.virtuozzo.dev/vap-images/latest/vap-8-13-1.qcow2
+wget https://vap-images.virtuozzo.dev/vap-images/latest/vap-8-14-2.qcow2
 ```
 - Create an image:
 ```
-vinfra service compute image create vap-8-13-1 --disk-format qcow2 --container-format bare --file vap-8-13-1.qcow2 --public --wait
+vinfra service compute image create vap-8-14-2 --disk-format qcow2 --container-format bare --file vap-8-14-2.qcow2 --public --wait
 ```
 
 3\. Check [PaaS requirements](https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/) and, if needed, [create flavors](https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_6_3_admins_guide/index.html#creating-custom-flavors.html) with sufficient resources in your VHI cluster.
@@ -43,7 +43,7 @@ vinfra service compute image create vap-8-13-1 --disk-format qcow2 --container-f
 
 We've prepared **GUI** and **CLI** installation scenarios for automatic VHI cluster configuration. The GUI flow just provides the visual interface to help perform installation and configuration without manual commands. Otherwise, both flows are similar and utilize the same set of the commands. Deployment does not require in-depth knowledge of the Virtuozzo Application Platform or [VHI Openstack](https://github.com/virtuozzo/vhideploy).
 
-> In some complex custom cases, you may prefer to use the OpenStack Heat template for the VAP installation. Check the detailed [VAP Cluster Deployment with OpenStack Heat](https://github.com/virtuozzo/vap-installer-on-vhi/tree/8.13-1/installer) guide.
+> In some complex custom cases, you may prefer to use the OpenStack Heat template for the VAP installation. Check the detailed [VAP Cluster Deployment with OpenStack Heat](https://github.com/virtuozzo/vap-installer-on-vhi/tree/8.14-2/installer) guide.
 
 ### GUI Installation
 
