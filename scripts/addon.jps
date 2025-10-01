@@ -82,6 +82,11 @@ settings:
          text: "Select required <b>qcow2</b> VAP image name"
          tipParams:
          minWidth: 280
+     - name: install_cmp
+       caption: Install CMP
+       type: toggle
+       default: false
+       tooltip: "Enable installation of CMP components on infra node"
      - name: ssh_key
        caption: SSH Key Name
        type: list
@@ -465,6 +470,7 @@ actions:
         --user-storage-policy=${settings.user_storage_policy} 
         --vap-platform-data-storage-policy=${settings.vap_platform_data_storage_policy} 
         --vap-platform-data-size=${settings.upload_docker_cache_size} 
+        --install-cmp=${settings.install_cmp}
         --format=json
       script: |
         var resp = jelastic.env.control.ExecCmdById('${env.envName}', session, '${nodes.cp.master.id}', toJSON([{ command: createCmd }]), true);

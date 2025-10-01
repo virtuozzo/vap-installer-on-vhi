@@ -106,6 +106,7 @@ Click **Configure** to confirm.
 - ***User Node Count*** – number of User hosts to be created within the platform
 - ***VHI Public Subnet*** – cluster's public subnet to attach created instances
 - ***VAP Image Name*** – a *qcow2* image with the PaaS version
+- ***Install CMP*** – toggle to enable installation of CMP components (default: disabled)
 
 ![new VAP stack](images/07-new-vap-stack.png)
 

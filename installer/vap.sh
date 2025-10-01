@@ -603,6 +603,11 @@ create(){
       shift
       shift
       ;;
+      --install-cmp=*)
+      INSTALL_CMP=${i#*=}
+      shift
+      shift
+      ;;
       *)
         ;;
     esac
@@ -676,6 +681,9 @@ create(){
   if [ ! -z "${VAP_PLATFORM_DATA_STORAGE_POLICY}" ]; then
       createcmd+=" --parameter storage_policy_vap_platform_data=${VAP_PLATFORM_DATA_STORAGE_POLICY}"
   fi
+  if [ ! -z "${INSTALL_CMP}" ]; then
+      createcmd+=" --parameter install_cmp=${INSTALL_CMP}"
+  fi
   createcmd+=" --parameter key_name=${KEY_NAME}"
   createcmd+=" --wait"
 
@@ -744,7 +752,7 @@ echo "             --new-ssh-key-name - Specify the name of new SSH key which wi
 echo
 echo "   CREATE NEW VAP:"
 echo "       COMMAND:  "
-echo "             $SCRIPTNAME create --infra-flavor=1 --user-flavor=1 --root-storage-policy=1 --infra-storage-policy=1 --user-storage-policy=1 --vap-platform-data-storage-policy=1 --subnet=1 --image=2 --user-host-count=1 --infra-root-size=100 --infra-vz-size=400 --user-root-size=100 --user-vz-size=800 --vap-platform-data-size=300 --infra-swap-size=8 --user-swap-size=8 --key-name=key-name"
+echo "             $SCRIPTNAME create --infra-flavor=1 --user-flavor=1 --root-storage-policy=1 --infra-storage-policy=1 --user-storage-policy=1 --vap-platform-data-storage-policy=1 --subnet=1 --image=2 --user-host-count=1 --infra-root-size=100 --infra-vz-size=400 --user-root-size=100 --user-vz-size=800 --vap-platform-data-size=300 --infra-swap-size=8 --user-swap-size=8 --key-name=key-name --install-cmp=true"
 echo "       ARGUMENTS:    "
 echo "             --infra-flavor - ID of Infra node flavor "
 echo "             --user-flavor - ID of User node flavor"
@@ -773,6 +781,7 @@ echo "                      4-8 GB - the swap size is equal to the RAM size"
 echo "                      8-64 GB - the swap size is half the RAM size"
 echo "                      64+ GB - the swap size is 32 GB"
 echo "             --key-name - SSH key name"
+echo "             --install-cmp - Enable CMP installation (true|false, default: false)"
 echo
 }
 

@@ -39,4 +39,5 @@ bash /root/jelastic_installer.sh \
 --disks_to_mount "1:swap,2:/vap-platform,3:/vz" \
 --hd_requirement_warning "NO" \
 --docker_cache_folder "/vap-platform/docker" $param_proxy $param_le $param_ns \
+--install_cmp "$install_cmp" \
 --skiparping >> /var/log/install.log 2>&1

@@ -133,6 +133,15 @@ parameters:
     description: IP address of the DNS server to use
     default: ''
 
+  install_cmp:
+    type: string
+    label: Install CMP
+    description: Enable installation of CMP components on infra node (true/false)
+    default: 'false'
+    constraints:
+      - allowed_values: ['true', 'false']
+        description: must be 'true' or 'false'.
+
 resources:
 
   node_name_prefix:
@@ -271,6 +280,7 @@ resources:
             $infra2_internal_ip: { get_attr: [port_private_infra2, fixed_ips, 0, ip_address] }
             $proxy: { get_param: proxy }
             $nameserver : { get_param: nameserver }
+            $install_cmp: { get_param: install_cmp }
 
 
 
