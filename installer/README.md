@@ -53,7 +53,7 @@ The `VAP.yaml` OpenStack Heat template is used to deploy a VAP cluster. It uses 
   - `key_name`: SSH key name for VM access
 - **Optional Parameters**
   - `user_hosts_count`: Number of user nodes (default: 3; range: 0-100)
-  - `image`: Base image name (default: vap-8-14-2)
+  - `image`: Base image name (default: vap-8-14-3)
   - `public_network`: Public network name (default: public)
   - `proxy`: HTTP/HTTPS proxy URL
   - `nameserver`: Custom DNS server IP
