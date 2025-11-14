@@ -153,7 +153,7 @@ bash vap.sh
 - ***new-ssh-key-name*** – name for the public SSH key; if specified, a new key pair will be automatically generated and public key uploaded to VHI cluster (optional)
 
 ```
-sh vap.sh configure --project-domain={domain} --user-domain={domain} --project={project} --username={name} --password={password} --url={url} --vap-stack-name={stack} --new-ssh-key-name={SSH key name}
+bash vap.sh configure --project-domain={domain} --user-domain={domain} --project={project} --username={name} --password={password} --url={url} --vap-stack-name={stack} --new-ssh-key-name={SSH key name}
 ```
 
 ![vap.sh configure](images/11-vap-sh-configure.png)
