@@ -177,9 +177,10 @@ sh vap.sh configure --project-domain={domain} --user-domain={domain} --project={
 - ***infra-swap-size*** – Infra node swap size (GB)
 - ***user-swap-size*** – User node swap size (GB)
 - ***key-name*** - public SSH key from the VHI cluster
+- ***install-cmp*** – enable CMP installation (true|false, default: false)
 
 ```
-sh vap.sh create --infra-flavor={ID} --user-flavor={ID} --subnet={ID} --image={ID} --user-host-count={number} --infra-root-size={GB} --infra-vz-size={GB} --user-root-size={GB} --user-vz-size={GB} --infra-swap-size={GB} --user-swap-size={GB} --key-name={SSH key name}
+sh vap.sh create --infra-flavor={ID} --user-flavor={ID} --subnet={ID} --image={ID} --user-host-count={number} --infra-root-size={GB} --infra-vz-size={GB} --user-root-size={GB} --user-vz-size={GB} --infra-swap-size={GB} --user-swap-size={GB} --key-name={SSH key name} --install-cmp={true|false}
 ```
 
 ![vap.sh create](images/12-vap-sh-create.png)

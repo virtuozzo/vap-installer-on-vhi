@@ -1,0 +1,2 @@
+python-openstackclient==7.0.0
+openstack-heat==25.0.0
