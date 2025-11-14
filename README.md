@@ -136,7 +136,7 @@ git clone https://github.com/virtuozzo/vap-installer-on-vhi
 
 ```
 cd vap-installer-on-vhi/installer/
-sh vap.sh
+bash vap.sh
 ```
 
 ![vap.sh help](images/10-vap-sh-help.png)
