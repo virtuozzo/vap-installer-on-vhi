@@ -7,6 +7,8 @@ This project helps you create PaaS (Virtuozzo Application Platform or VAP) on to
 - **[PaaS Web Installer](#paas-web-installer)** – run the automatic PaaS installer
 - **[Remove VAP Stack](#remove-vap-stack)** – delete unnecessary VAP stacks
 
+> **Note:** The automated installer in this repository covers basic installation steps and is intended for PoC and demo deployments only. For production deployments with full capabilities (including monitoring, platform patcher installation, backup configuration, etc.), please contact the Virtuozzo team.
+
 
 ## Installation Prerequisites
 
