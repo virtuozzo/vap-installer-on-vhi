@@ -3,7 +3,7 @@ name: Virtuozzo Application Management Installer Add-On
 id: vap-installer-addon 
 targetEditions: any 
 logo: /images/logo-small.png
-description: Provision VHI infrastructure and deploy a new Virtuozzo Application Management instance on it
+description: Provision Virtuozzo Infrastructure and deploy a new Virtuozzo Application Management instance on it
 
 targetNodes:
   nodeType:
@@ -21,38 +21,38 @@ settings:
       - type: string 
         name: vhi_proj_domain_name 
         caption: Project Domain Name 
-        tooltip: "<span>Specify VHI project domain name you will use to create VMs in</span>"
+        tooltip: "<span>Specify Virtuozzo Infrastructure project domain name you will use to create VMs in</span>"
         required: true
 
       - type: string 
         name: vhi_user_domain_name 
         caption: User Domain Name 
-        tooltip: "<span>Specify VHI user domain name you will use to create VMs in</span>"
+        tooltip: "<span>Specify Virtuozzo Infrastructure user domain name you will use to create VMs in</span>"
         required: true
 
       - type: string 
         name: vhi_proj_name 
         caption: Project Name 
-        tooltip: "<span>Specify VHI project name you will use to create VMs in</span>"
+        tooltip: "<span>Specify Virtuozzo Infrastructure project name you will use to create VMs in</span>"
         required: true
 
       - type: string 
         name: vhi_username 
         caption: Username 
-        tooltip: "<span>Specify VHI account username you will use to create VMs</span>"
+        tooltip: "<span>Specify Virtuozzo Infrastructure account username you will use to create VMs</span>"
         required: true
         
       - type: string
         inputType: password
         name: vhi_password 
         caption: Password 
-        tooltip: "<span>Specify VHI account password you will use to create VMs</span>"
+        tooltip: "<span>Specify Virtuozzo Infrastructure account password you will use to create VMs</span>"
         required: true
         
       - type: string 
         name: vhi_url 
         caption: URL 
-        tooltip: "<span>Specify VHI cluster API endpoint URL</span>"
+        tooltip: "<span>Specify Virtuozzo Infrastructure cluster API endpoint URL</span>"
         required: true
         
       - type: string 
@@ -83,16 +83,16 @@ settings:
          tipParams:
          minWidth: 280
      - name: install_cmp
-       caption: Install CMP
+       caption: Install Virtuozzo Cloud Management
        type: toggle
        default: false
-       tooltip: "Enable installation of CMP components on infra node"
+       tooltip: "Enable installation of Virtuozzo Cloud Management components on infra node"
      - name: ssh_key
        caption: SSH Key Name
        type: list
        required: true
        values: sshKeysPrepared 
-       tooltip: "Pick the <b>SSH Key</b> to be injected into Infra and User Nodes (Virtual Machines). If you chose the <b>New SSH Key</b> option on previous <b>Configure</b> step, a new SSH key pair will be generated, and your environment and VHI cluster will be configured automatically for new SSH keypair usage. If you want to use already existing <b>SSH Key</b> available on VHI cluster, please choose among available ones in the list. <a href='https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_4_6_admins_guide/index.html?TocPath=Management%257CManaging%2520the%2520compute%2520cluster%257CManaging%2520virtual%2520machines%257C_____4#adding-ssh-keys.html?TocPath=Management%257CManaging%2520the%2520compute%2520cluster%257CManaging%2520virtual%2520machines%257C_____4' target='_blank'>Learn More</a> about SSH key pairs in VHI cluster.<p></p>"
+       tooltip: "Pick the <b>SSH Key</b> to be injected into Infra and User Nodes (Virtual Machines). If you chose the <b>New SSH Key</b> option on previous <b>Configure</b> step, a new SSH key pair will be generated, and your environment and Virtuozzo Infrastructure cluster will be configured automatically for new SSH keypair usage. If you want to use already existing <b>SSH Key</b> available on Virtuozzo Infrastructure cluster, please choose among available ones in the list. <a href='https://docs.virtuozzo.com/virtuozzo_infrastructure_7_2_admins_guide/#adding-ssh-keys.html' target='_blank'>Learn More</a> about SSH key pairs in Virtuozzo Infrastructure cluster.<p></p>"
      - caption: Installation type
        type: list
        name: inst_type
@@ -150,7 +150,7 @@ settings:
             max: 3000
             width: 108
             tooltip:
-              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
+              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -190,7 +190,7 @@ settings:
             max: 3000
             width: 108
             tooltip:
-              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
+              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -230,7 +230,7 @@ settings:
             max: 3000
             width: 108
             tooltip:
-              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
+              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -270,7 +270,7 @@ settings:
             max: 3000
             width: 108
             tooltip:
-              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
+              text: "Specify total size for Uploader storage and Docker templates cache storage.<a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/#uploader-storage' target='_blank'>Learn More</a>"
               tipParams:
               maxWidth: 830
               minWidth: 300
@@ -353,10 +353,10 @@ settings:
           max: 512
           default: 32
           width: 108
-     - caption: VHI Public Subnet
+     - caption: Virtuozzo Infrastructure Public Subnet
        type: list
        tooltip:
-         text: Select required VHI cluster subnet
+         text: Select required Virtuozzo Infrastructure cluster subnet
          minWidth: 240
        name: subnet
        required: true
@@ -367,7 +367,7 @@ settings:
 buttons:
 - caption: Configure
   action: configure
-  title: Configure VHI Cluster Details
+  title: Configure Virtuozzo Infrastructure Cluster Details
   settings: configure
   loadingText: Configuring...
   submitButtonText: Configure

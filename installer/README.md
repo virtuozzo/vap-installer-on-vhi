@@ -57,7 +57,7 @@ The `VAP.yaml` OpenStack Heat template is used to deploy a Virtuozzo Application
   - `public_network`: Public network name (default: public)
   - `proxy`: HTTP/HTTPS proxy URL
   - `nameserver`: Custom DNS server IP
-  - `install_cmp`: Enable installation of CMP components (`true` or `false`, default: `false`)
+  - `install_cmp`: Enable installation of Virtuozzo Cloud Management components (`true` or `false`, default: `false`)
 - **Storage Parameters**
   - `storage_policy_root`: Storage policy for root volumes (default: default)
   - `storage_policy_infra_vz`: Storage policy for infra /vz volumes (default: default)

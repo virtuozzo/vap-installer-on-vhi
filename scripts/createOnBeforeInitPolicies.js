@@ -16,7 +16,7 @@ var imagesList = getJsonFromFile("images.json");
 if (imagesList == "{}") { showMarkup = true; markup += "Virtuozzo Application Management image names, "; }
 var imageListPrepared = prepareImageList(JSON.parse(imagesList));
 var subnetsList = getJsonFromFile("subnets.json");
-if (subnetsList == "{}") { showMarkup = true; markup += "VHI public subnets, "; }
+if (subnetsList == "{}") { showMarkup = true; markup += "Virtuozzo Infrastructure public subnets, "; }
 var subnetListPrepared = prepareSubnetList(JSON.parse(subnetsList));
 var sshKeys = getSSHKeysList();
 var sshKeysPrepared = prepareSSHKeysList(JSON.parse(sshKeys));
@@ -126,21 +126,21 @@ for (let field of jps.settings.create.fields)
   fields[field.name] = field;
 var instTypeFields = fields["inst_type"].showIf;
 instTypeFields.poc[1].values = infraFlavorListPrepared;
-instTypeFields.poc[1].tooltip.text = "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/poc-requirements-w-uploader-docker.svg'>";
+instTypeFields.poc[1].tooltip.text = "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/poc-requirements-w-uploader-docker.svg'>";
 instTypeFields.poc[2].values = userFlavorListPrepared;
-instTypeFields.poc[2].tooltip.text = "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/poc-requirements-w-uploader-docker.svg'>";
+instTypeFields.poc[2].tooltip.text = "<h2>PoC Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/poc-requirements-w-uploader-docker.svg'>";
 instTypeFields.sb[1].values = infraFlavorListPrepared;
-instTypeFields.sb[1].tooltip.text = "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/sandbox-requirements-w-uploader-docker.svg'>";
+instTypeFields.sb[1].tooltip.text = "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/sandbox-requirements-w-uploader-docker.svg'>";
 instTypeFields.sb[2].values = userFlavorListPrepared;
-instTypeFields.sb[2].tooltip.text = "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/sandbox-requirements-w-uploader-docker.svg'>";
+instTypeFields.sb[2].tooltip.text = "<h2>Sandbox Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/sandbox-requirements-w-uploader-docker.svg'>";
 instTypeFields.prod[1].values = infraFlavorListPrepared;
-instTypeFields.prod[1].tooltip.text = "<h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/performance-requirements-w-uploader-docker.svg'>";
+instTypeFields.prod[1].tooltip.text = "<h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>Infra</b> nodes. <a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/performance-requirements-w-uploader-docker.svg'>";
 instTypeFields.prod[2].values = userFlavorListPrepared;
-instTypeFields.prod[2].tooltip.text = "<h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/performance-requirements-w-uploader-docker.svg'>";
+instTypeFields.prod[2].tooltip.text = "<h2>Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/performance-requirements-w-uploader-docker.svg'>";
 instTypeFields.high_prod[1].values = infraFlavorListPrepared;
-instTypeFields.high_prod[1].tooltip.text = "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/high-performance-requirements-w-uploader-docker.svg'>";
+instTypeFields.high_prod[1].tooltip.text = "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/high-performance-requirements-w-uploader-docker.svg'>";
 instTypeFields.high_prod[2].values = userFlavorListPrepared;
-instTypeFields.high_prod[2].tooltip.text = "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-platform-ops-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/high-performance-requirements-w-uploader-docker.svg'>";
+instTypeFields.high_prod[2].tooltip.text = "<h2>High Performance Production Installation Type</h2>Make sure the Flavor meets the requirements for <b>User</b> nodes. <a href='https://www.virtuozzo.com/application-management-admin-docs/hardware-requirements-local-storage/' target='_blank'>Learn More</a><p></p> <img width='600' height='250' src='" + baseUrl + "images/high-performance-requirements-w-uploader-docker.svg'>";
 fields["vap_stack_name"].value = vapStackName;
 fields["subnet"].values = subnetListPrepared;
 fields["image_name"].values = imageListPrepared;
@@ -151,7 +151,7 @@ settings.fields.push({
     "caption": "Storage Policy Root",
     "type": "list",
     "tooltip": {
-      "text": "A storage policy is a group of parameters that define how to store VM volumes: a tier, a failure domain, and a redundancy mode. A storage policy can also be used to limit the bandwidth or IOPS of the volume.\nYou may check storage policy details with VHI cluster admin. <a href='https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_5_0_admins_guide/index.html#managing-storage-policies.html' target='_blank'>Learn More</a><p></p>\n"
+      "text": "A storage policy is a group of parameters that define how to store VM volumes: a tier, a failure domain, and a redundancy mode. A storage policy can also be used to limit the bandwidth or IOPS of the volume.\nYou may check storage policy details with Virtuozzo Infrastructure cluster admin. <a href='https://docs.virtuozzo.com/virtuozzo_infrastructure_7_2_admins_guide/#managing-storage-policies.html' target='_blank'>Learn More</a><p></p>\n"
     },
     "name": "root_storage_policy",
     "required": true,
@@ -164,7 +164,7 @@ settings.fields.push(
     "caption": "Storage Policy: Infra\n",
     "defaultMargins": "6 10 0 0",
     "tooltip": {
-      "text": "A storage policy is a group of parameters that define how to store VM volumes: a tier, a failure domain, and a redundancy mode. A storage policy can also be used to limit the bandwidth or IOPS of the volume.\nYou may check storage policy details with VHI cluster admin. <a href='https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_5_0_admins_guide/index.html#managing-storage-policies.html' target='_blank'>Learn More</a><p></p>\n"
+      "text": "A storage policy is a group of parameters that define how to store VM volumes: a tier, a failure domain, and a redundancy mode. A storage policy can also be used to limit the bandwidth or IOPS of the volume.\nYou may check storage policy details with Virtuozzo Infrastructure cluster admin. <a href='https://docs.virtuozzo.com/virtuozzo_infrastructure_7_2_admins_guide/#managing-storage-policies.html' target='_blank'>Learn More</a><p></p>\n"
     },
     "items": [
       {
@@ -180,7 +180,7 @@ settings.fields.push(
       },
       {
         "type": "tooltip",
-        "text": "A storage policy is a group of parameters that define how to store VM volumes: a tier, a failure domain, and a redundancy mode. A storage policy can also be used to limit the bandwidth or IOPS of the volume.\nYou may check storage policy details with VHI cluster admin. <a href='https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_5_0_admins_guide/index.html#managing-storage-policies.html' target='_blank'>Learn More</a><p></p>\n"
+        "text": "A storage policy is a group of parameters that define how to store VM volumes: a tier, a failure domain, and a redundancy mode. A storage policy can also be used to limit the bandwidth or IOPS of the volume.\nYou may check storage policy details with Virtuozzo Infrastructure cluster admin. <a href='https://docs.virtuozzo.com/virtuozzo_infrastructure_7_2_admins_guide/#managing-storage-policies.html' target='_blank'>Learn More</a><p></p>\n"
       },
       {
         "name": "user_storage_policy",
@@ -198,7 +198,7 @@ settings.fields.push(
      "required": true,
      "values": storagePoliciesListPrepared,
      "tooltip": {
-       "text": "A storage policy is a group of parameters that define how to store VM volumes: a tier, a failure domain, and a redundancy mode. A storage policy can also be used to limit the bandwidth or IOPS of the volume.\nYou may check storage policy details with VHI cluster admin. <a href='https://docs.virtuozzo.com/virtuozzo_hybrid_infrastructure_5_0_admins_guide/index.html#managing-storage-policies.html' target='_blank'>Learn More</a><p></p>\n"
+       "text": "A storage policy is a group of parameters that define how to store VM volumes: a tier, a failure domain, and a redundancy mode. A storage policy can also be used to limit the bandwidth or IOPS of the volume.\nYou may check storage policy details with Virtuozzo Infrastructure cluster admin. <a href='https://docs.virtuozzo.com/virtuozzo_infrastructure_7_2_admins_guide/#managing-storage-policies.html' target='_blank'>Learn More</a><p></p>\n"
      },
   }
 );

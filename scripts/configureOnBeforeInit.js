@@ -7,7 +7,7 @@ settings.fields.push({
     "type": "toggle",
     "name": "ssh_key_check",
     "caption": "New SSH Key",
-    "tooltip": "If you have no SSH key in VHI cluster tick on the checkbox and come up with SSH key name. A new SSH key pair will be generated and injected into your environment and added to VHI cluster automatically.",
+    "tooltip": "If you have no SSH key in Virtuozzo Infrastructure cluster tick on the checkbox and come up with SSH key name. A new SSH key pair will be generated and injected into your environment and added to Virtuozzo Infrastructure cluster automatically.",
     "showIf": {
       "true": [
         {

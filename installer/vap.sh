@@ -179,7 +179,7 @@ getImages(){
     seperator=---------------------------------------------------------------------------------------------------
     rows="%-5s| %-50s| %s\n"
     TableWidth=100
-    echo -e "\n\nVHI Images List"
+    echo -e "\n\nVirtuozzo Infrastructure Images List"
     printf "%.${TableWidth}s\n" "$seperator"
     printf "%-5s| %-50s| %s\n" ID Name Status
     printf "%.${TableWidth}s\n" "$seperator"
@@ -232,7 +232,7 @@ getSubnets(){
     seperator=---------------------------------------------------------------------------------------------------
     rows="%-5s| %-50s| %s\n"
     TableWidth=100
-    echo -e "\n\nVHI Cluster Subnets"
+    echo -e "\n\nVirtuozzo Infrastructure Cluster Subnets"
     printf "%.${TableWidth}s\n" "$seperator"
     printf "%-5s| %-50s| %s\n" ID Subnet Network
     printf "%.${TableWidth}s\n" "$seperator"
@@ -284,7 +284,7 @@ getKeypairs(){
     seperator=---------------------------------------------------------------------------------------------------
     rows="%-5s| %-50s| %s\n"
     TableWidth=100
-    echo -e "\n\nVHI Keypairs List"
+    echo -e "\n\nVirtuozzo Infrastructure Keypairs List"
     printf "%.${TableWidth}s\n" "$seperator"
     printf "%-5s| %-50s| %s\n" ID Name Fingerprint
     printf "%.${TableWidth}s\n" "$seperator"
@@ -337,7 +337,7 @@ getStoragePolicies(){
     seperator=---------------------------------------------------------------------------------------------------
     rows="%-5s| %-50s| %s\n"
     TableWidth=100
-    echo -e "\n\nVHI Storage Policies List"
+    echo -e "\n\nVirtuozzo Infrastructure Storage Policies List"
     printf "%.${TableWidth}s\n" "$seperator"
     printf "%-5s| %-50s| %s\n" ID Name "Is Public"
     printf "%.${TableWidth}s\n" "$seperator"
@@ -737,16 +737,16 @@ create(){
 usage() {
 SCRIPTNAME=$(basename "$BASH_SOURCE")
 echo " USAGE:"
-echo "   CONFIGURE VHI CLUSTER DETAILS:"
+echo "   CONFIGURE VIRTUOZZO INFRASTRUCTURE CLUSTER DETAILS:"
 echo "       COMMAND:  "
 echo "             $SCRIPTNAME configure --project-domain=[PROJECT_DOMAIN] --user-domain=[USER_DOMAIN] --project=[PROJECT] --username=[USERNAME] --password=[PASSWORD] --url=[URL] --vap-stack-name=[PROJECT NAME] --new-ssh-key-name=[SSH KEY NAME]"
 echo "       ARGUMENTS:    "
-echo "             --project-domain - VHI cluster project name the user account belongs to"
-echo "             --user-domain - VHI cluster project name the user account belongs to"
-echo "             --project - VHI cluster project name the user account belongs to"
-echo "             --username - VHI cluster account username"
-echo "             --password - VHI cluster account password"
-echo "             --url - VHI cluster API endpoint URL"
+echo "             --project-domain - Virtuozzo Infrastructure cluster project name the user account belongs to"
+echo "             --user-domain - Virtuozzo Infrastructure cluster project name the user account belongs to"
+echo "             --project - Virtuozzo Infrastructure cluster project name the user account belongs to"
+echo "             --username - Virtuozzo Infrastructure cluster account username"
+echo "             --password - Virtuozzo Infrastructure cluster account password"
+echo "             --url - Virtuozzo Infrastructure cluster API endpoint URL"
 echo "             --vap-stack-name - Specify Virtuozzo Application Management Project Name"
 echo "             --new-ssh-key-name - Specify the name of new SSH key which will be generated (at least 3 symbols required)"
 echo
@@ -761,7 +761,7 @@ echo "             --infra-storage-policy - ID of Infra node volume storage poli
 echo "             --user-storage-policy - ID of User node volume storage policy"
 echo "             --vap-platform-data-storage-policy - ID of Virtuozzo Application Management platform data volume storage policy"
 echo "             --subnet - ID of public subnet"
-echo "             --image - ID of Virtuozzo Application Management image available on VHI cluster"
+echo "             --image - ID of Virtuozzo Application Management image available on Virtuozzo Infrastructure cluster"
 echo "             --user-host-count - Number of user host nodes to be created"
 echo "             --infra-root-size - Infra node storage volume size in GB"
 echo "             --infra-vz-size - Infra node storage volume size in GB"
@@ -781,7 +781,7 @@ echo "                      4-8 GB - the swap size is equal to the RAM size"
 echo "                      8-64 GB - the swap size is half the RAM size"
 echo "                      64+ GB - the swap size is 32 GB"
 echo "             --key-name - SSH key name"
-echo "             --install-cmp - Enable CMP installation (true|false, default: false)"
+echo "             --install-cmp - Enable Virtuozzo Cloud Management installation (true|false, default: false)"
 echo
 }
 

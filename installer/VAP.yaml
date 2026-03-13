@@ -135,8 +135,8 @@ parameters:
 
   install_cmp:
     type: string
-    label: Install CMP
-    description: Enable installation of CMP components on infra node (true/false)
+    label: Install Virtuozzo Cloud Management
+    description: Enable installation of Virtuozzo Cloud Management components on infra node (true/false)
     default: 'false'
     constraints:
       - allowed_values: ['true', 'false']
